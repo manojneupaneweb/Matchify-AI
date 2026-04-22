@@ -58,7 +58,7 @@ const PLANS = [
 
 export default function PricingSection() {
   return (
-    <section id="pricing" className="py-28 md:py-40 flex flex-col items-center">
+    <section id="pricing" className="py-28 md:py-40 flex flex-col items-center bg-black">
       <div className="w-full max-w-7xl mx-auto px-6 md:px-20">
 
         {/* Header */}
@@ -80,7 +80,7 @@ export default function PricingSection() {
           {PLANS.map((plan, i) => (
             <div
               key={i}
-              className={`glass-panel p-8 relative flex flex-col transition-all duration-300 animate-fade-in-up ${
+              className={`glass-panel p-8 bg-white/[0.01] border-white/5 relative flex flex-col transition-all duration-500 animate-fade-in-up ${
                 plan.popular
                   ? 'border-violet-500/40 shadow-2xl shadow-violet-900/30 -translate-y-2 md:-translate-y-4'
                   : 'hover:-translate-y-1'
@@ -107,9 +107,9 @@ export default function PricingSection() {
 
               {/* Price */}
               <div className="flex items-end gap-1 mb-8">
-                <span className="text-slate-400 text-xl self-start mt-1.5">$</span>
-                <span className="text-5xl font-extrabold text-white">{plan.price}</span>
-                <span className="text-slate-400 text-sm mb-1.5">/{plan.period}</span>
+                <span className="text-gray-500 text-xl self-start mt-1.5 font-bold">$</span>
+                <span className="text-6xl font-black text-white">{plan.price}</span>
+                <span className="text-gray-500 text-sm mb-2.5 font-bold tracking-tight">/{plan.period}</span>
               </div>
 
               {/* Features */}

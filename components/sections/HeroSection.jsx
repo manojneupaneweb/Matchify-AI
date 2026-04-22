@@ -70,13 +70,13 @@ const COMPANY_LOGOS = [
 
 export default function HeroSection({ onScrollToAnalyzer, liveStats }) {
   return (
-    <section id="hero" className="relative min-h-screen flex flex-col items-center justify-center pt-32 pb-16 text-center overflow-hidden">
+    <section id="hero" className="relative min-h-screen flex flex-col items-center justify-center pt-32 pb-16 text-center overflow-hidden bg-black">
 
       {/* Background orbs */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-violet-600/10 rounded-full blur-[120px]" />
-        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-cyan-500/10 rounded-full blur-[100px]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-purple-900/5 rounded-full blur-[160px]" />
+        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-violet-600/5 rounded-full blur-[120px]" />
+        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-cyan-500/5 rounded-full blur-[100px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-purple-900/[0.03] rounded-full blur-[160px]" />
       </div>
 
       {/* Grid texture */}
@@ -125,13 +125,13 @@ export default function HeroSection({ onScrollToAnalyzer, liveStats }) {
         {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto mb-14 animate-fade-in-up delay-400">
           {STATS.map(({ icon: Icon, value, label, color }, i) => (
-            <div key={i} className="glass-panel p-5 flex items-center gap-4">
-              <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${color} flex items-center justify-center flex-shrink-0 shadow-lg`}>
+            <div key={i} className="glass-panel p-5 flex items-center gap-4 bg-white/[0.02] border-white/5 hover:bg-white/[0.04]">
+              <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${color} flex items-center justify-center flex-shrink-0 shadow-lg brightness-90`}>
                 <Icon className="w-6 h-6 text-white" />
               </div>
               <div className="text-left">
-                <div className="text-2xl font-extrabold stat-value">{value}</div>
-                <div className="text-xs text-slate-500 mt-0.5 font-medium">{label}</div>
+                <div className="text-2xl font-extrabold stat-value tracking-tight">{value}</div>
+                <div className="text-[10px] text-gray-500 mt-0.5 font-bold uppercase tracking-wider">{label}</div>
               </div>
             </div>
           ))}

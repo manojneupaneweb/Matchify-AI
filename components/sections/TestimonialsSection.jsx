@@ -60,7 +60,7 @@ const TESTIMONIALS = [
 
 export default function TestimonialsSection() {
   return (
-    <section id="testimonials" className="py-28 md:py-40 flex flex-col items-center">
+    <section id="testimonials" className="py-28 md:py-40 flex flex-col items-center bg-black">
       <div className="w-full max-w-7xl mx-auto px-6 md:px-20">
 
         {/* Header */}
@@ -80,11 +80,11 @@ export default function TestimonialsSection() {
         {/* Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {TESTIMONIALS.map((t, i) => (
-            <div
-              key={i}
-              className="glass-panel p-7 group hover:-translate-y-2 transition-all duration-300 relative overflow-hidden animate-fade-in-up"
-              style={{ animationDelay: `${i * 0.1}s` }}
-            >
+              <div
+                key={i}
+                className="glass-panel p-7 bg-white/[0.01] border-white/5 group hover:-translate-y-2 transition-all duration-500 relative overflow-hidden animate-fade-in-up"
+                style={{ animationDelay: `${i * 0.1}s` }}
+              >
               {/* Quote icon */}
               <Quote className="absolute top-5 right-5 w-8 h-8 text-white/4 group-hover:text-white/8 transition-colors" />
 
@@ -96,7 +96,7 @@ export default function TestimonialsSection() {
               </div>
 
               {/* Text */}
-              <p className="text-slate-300 text-sm leading-relaxed mb-6 italic">"{t.text}"</p>
+              <p className="text-gray-400 text-sm leading-relaxed mb-6 italic font-medium opacity-90">"{t.text}"</p>
 
               {/* Author */}
               <div className="flex items-center gap-3 mt-auto pt-4 border-t border-white/[0.06]">

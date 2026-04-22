@@ -41,7 +41,7 @@ export default function FAQSection() {
   const [openIndex, setOpenIndex] = useState(null);
 
   return (
-    <section id="faq" className="py-28 md:py-40 flex flex-col items-center">
+    <section id="faq" className="py-28 md:py-40 flex flex-col items-center bg-black">
       <div className="w-full max-w-4xl mx-auto px-6 md:px-20">
 
         {/* Header */}
@@ -63,7 +63,7 @@ export default function FAQSection() {
             return (
               <div
                 key={i}
-                className={`glass-panel overflow-hidden transition-all duration-300 animate-fade-in-up ${isOpen ? 'border-violet-500/30' : ''}`}
+                className={`glass-panel bg-white/[0.01] border-white/5 overflow-hidden transition-all duration-500 animate-fade-in-up ${isOpen ? 'border-violet-500/30' : ''}`}
                 style={{ animationDelay: `${i * 0.05}s` }}
               >
                 <button

@@ -14,7 +14,7 @@ const FEATURES = [
 
 export default function FeaturesSection() {
   return (
-    <section id="features" className="py-28 md:py-40 flex flex-col items-center">
+    <section id="features" className="py-28 md:py-40 flex flex-col items-center bg-black">
       <div className="w-full max-w-7xl mx-auto px-6 md:px-20">
 
         {/* Header */}
@@ -36,8 +36,8 @@ export default function FeaturesSection() {
             return (
               <div
                 key={i}
-                className="glass-panel p-6 group cursor-default hover:-translate-y-2 transition-all duration-300 overflow-hidden relative animate-fade-in-up"
-                style={{ animationDelay: `${i * 0.06}s`, background: feat.bg }}
+                className="glass-panel p-6 bg-white/[0.01] border-white/5 hover:bg-white/[0.03] group cursor-default hover:-translate-y-2 transition-all duration-500 overflow-hidden relative animate-fade-in-up"
+                style={{ animationDelay: `${i * 0.06}s` }}
               >
                 {/* Top gradient line */}
                 <div className={`absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r ${feat.color} opacity-0 group-hover:opacity-100 transition-opacity`} />
@@ -46,8 +46,8 @@ export default function FeaturesSection() {
                   <Icon className="w-6 h-6 text-white" />
                 </div>
 
-                <h3 className="text-base font-bold text-white mb-2 leading-tight">{feat.title}</h3>
-                <p className="text-slate-400 text-sm leading-relaxed mb-4">{feat.desc}</p>
+                <h3 className="text-base font-bold text-white mb-2 leading-tight uppercase tracking-tight">{feat.title}</h3>
+                <p className="text-gray-500 text-sm leading-relaxed mb-4 font-medium opacity-90">{feat.desc}</p>
 
                 <div className="flex items-center gap-1.5">
                   <div className={`w-1.5 h-1.5 rounded-full bg-gradient-to-r ${feat.color}`} />

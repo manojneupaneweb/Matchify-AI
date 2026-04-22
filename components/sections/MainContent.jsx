@@ -80,11 +80,7 @@ export default function MainContent() {
         <SectionDivider />
         <FAQSection />
 
-        <SectionDivider />
-        <NewsletterSection />
 
-        <SectionDivider />
-        <CTASection onScrollToAnalyzer={scrollToAnalyzer} />
       </main>
 
       <Footer />

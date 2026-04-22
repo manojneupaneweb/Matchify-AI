@@ -16,7 +16,7 @@ const SOCIAL = [
 
 export default function Footer() {
   return (
-    <footer className="relative border-t border-white/[0.06] mt-24 flex flex-col items-center">
+    <footer className="relative border-t border-white/5 mt-24 flex flex-col items-center bg-black">
       {/* Top glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[1px] bg-gradient-to-r from-transparent via-violet-500/50 to-transparent" />
 
@@ -35,7 +35,7 @@ export default function Footer() {
                 Matchify AI
               </span>
             </div>
-            <p className="text-slate-400 text-sm leading-relaxed mb-6">
+            <p className="text-gray-500 text-sm leading-relaxed mb-6 font-medium">
               Empowering job seekers with AI-driven resume analysis. Land your dream job with data-backed confidence.
             </p>
 
@@ -80,7 +80,7 @@ export default function Footer() {
 
         {/* Bottom: copyright + socials */}
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-8">
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-gray-600 font-bold tracking-tight">
             &copy; {new Date().getFullYear()} Matchify AI, Inc. All rights reserved. Made with ❤️ for job seekers.
           </p>
           <div className="flex items-center gap-2">

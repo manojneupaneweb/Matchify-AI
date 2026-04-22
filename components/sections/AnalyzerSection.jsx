@@ -20,7 +20,7 @@ export default function AnalyzerSection({
 }) {
 
   return (
-    <section id="analyzer" className="py-16 md:py-24 relative flex flex-col items-center">
+    <section id="analyzer" className="py-16 md:py-24 relative flex flex-col items-center bg-black">
       <div className="w-full max-w-7xl mx-auto px-6 md:px-20">
 
         {/* Header */}
@@ -38,7 +38,7 @@ export default function AnalyzerSection({
         </div>
 
         {/* ── Input Panel ── */}
-        <div className="glass-panel p-6 md:p-10 mb-10 animate-fade-in-up delay-100">
+        <div className="glass-panel p-6 md:p-10 mb-10 bg-white/[0.01] border-white/5 shadow-2xl relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
             {/* Resume Upload */}
@@ -90,7 +90,7 @@ export default function AnalyzerSection({
                 value={jd}
                 onChange={(e) => setJd(e.target.value)}
                 rows={6}
-                className="min-h-[160px]"
+                className="min-h-[160px] bg-black/40 border-white/10 focus:border-violet-500/50 text-gray-200 placeholder:text-gray-600"
               />
 
               <div className="flex items-start gap-2.5 px-4 py-3 bg-violet-500/5 border border-violet-500/15 rounded-xl">
@@ -139,7 +139,7 @@ export default function AnalyzerSection({
               )}
             </button>
             {(!file || !jd.trim()) && !loading && (
-              <p className="text-xs text-slate-600 mt-3">Upload a resume and paste a job description to continue</p>
+              <p className="text-[10px] font-bold text-gray-600 mt-4 uppercase tracking-[0.2em] animate-pulse">Upload a resume and paste a job description to continue</p>
             )}
           </div>
         </div>

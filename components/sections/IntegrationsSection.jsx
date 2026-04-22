@@ -12,7 +12,7 @@ const INTEGRATIONS = [
 
 export default function IntegrationsSection() {
   return (
-    <section id="integrations" className="relative py-16 md:py-24">
+    <section id="integrations" className="relative py-16 md:py-24 bg-black">
       <div className="max-w-7xl mx-auto px-6 md:px-20">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           
@@ -21,11 +21,11 @@ export default function IntegrationsSection() {
               <Puzzle className="w-3.5 h-3.5" />
               Seamless Workflow
             </div>
-            <h2 className="text-3xl md:text-5xl font-bold mb-6 leading-tight">
+            <h2 className="text-3xl md:text-5xl font-bold mb-6 leading-tight text-white uppercase tracking-tighter italic">
               Integrates with Your <br />
               <span className="gradient-text">Entire Ecosystem</span>
             </h2>
-            <p className="text-slate-400 text-lg mb-8 leading-relaxed">
+            <p className="text-gray-500 text-lg mb-8 leading-relaxed font-medium">
               Matchify AI doesn't work in isolation. Connect with your favorite job boards, email clients, and ATS platforms to streamline your entire job search journey from one dashboard.
             </p>
             
@@ -47,7 +47,7 @@ export default function IntegrationsSection() {
 
             <div className="mt-10">
               <button className="btn-secondary group">
-                Exploration All 50+ Integrations
+                Explore All 50+ Integrations
                 <ExternalLink className="w-4 h-4 text-slate-500 group-hover:text-white transition-colors" />
               </button>
             </div>
@@ -58,7 +58,7 @@ export default function IntegrationsSection() {
               {INTEGRATIONS.map((int, i) => (
                 <div 
                   key={i} 
-                  className={`glass-panel p-6 flex flex-col items-center text-center transition-all duration-500 hover:border-violet-500/40 hover:-translate-y-1 ${
+                  className={`glass-panel p-6 flex flex-col items-center text-center transition-all duration-500 hover:border-violet-500/40 hover:-translate-y-1 bg-white/[0.01] border-white/5 ${
                     i % 2 === 1 ? 'mt-8' : ''
                   }`}
                 >

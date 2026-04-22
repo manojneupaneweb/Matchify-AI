@@ -14,10 +14,10 @@ export default function NewsletterSection() {
   };
 
   return (
-    <section id="newsletter" className="relative py-24 overflow-hidden">
+    <section id="newsletter" className="relative py-24 overflow-hidden bg-black">
       <div className="max-w-7xl mx-auto px-6 md:px-20 relative z-10">
-        <div className="glass-panel p-1 border-white/5 overflow-hidden">
-          <div className="relative p-10 md:p-16 bg-slate-950/40 rounded-[19px] overflow-hidden">
+        <div className="glass-panel p-1 border-white/5 overflow-hidden bg-white/[0.01]">
+          <div className="relative p-10 md:p-16 bg-black/40 rounded-[19px] overflow-hidden">
             
             {/* Background elements */}
             <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-violet-600/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/4 pointer-events-none" />

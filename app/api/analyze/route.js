@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import pdf from 'pdf-parse/lib/pdf-parse.js';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { getServerSession } from 'next-auth/next';
-import { authOptions } from '../auth/[...nextauth]/route';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import dbConnect from '@/lib/mongodb';
 import Stats from '@/models/Stats';
 import Result from '@/models/Result';

@@ -26,7 +26,7 @@ const SECURITY_FEATURES = [
 
 export default function SecuritySection() {
   return (
-    <section id="security" className="relative py-24 bg-gradient-to-b from-[#060917] to-[#0a0d1d]">
+    <section id="security" className="relative py-24 bg-black">
       <div className="max-w-7xl mx-auto px-6 md:px-20">
         
         <div className="flex flex-col lg:flex-row items-center gap-16">
@@ -36,23 +36,23 @@ export default function SecuritySection() {
               <ShieldCheck className="w-3.5 h-3.5" />
               Privacy First AI
             </div>
-            <h2 className="text-3xl md:text-5xl font-bold mb-6 leading-tight">
+            <h2 className="text-3xl md:text-5xl font-bold mb-6 leading-tight text-white uppercase tracking-tighter">
               Your Professional Data <br />
-              <span className="gradient-text">Stays Professional</span>
+              <span className="gradient-text italic">Stays Professional</span>
             </h2>
-            <p className="text-slate-400 text-lg mb-10 leading-relaxed">
+            <p className="text-gray-500 text-lg mb-10 leading-relaxed font-medium">
               We understand the sensitivity of your career history. Our platform is built with a security-first architecture to ensure your information is protected, private, and used only for your benefit.
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
               {SECURITY_FEATURES.map((feat, i) => (
                 <div key={i} className="flex gap-4">
-                  <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-violet-500/10 flex items-center justify-center text-violet-400">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-white/[0.03] border border-white/5 flex items-center justify-center text-violet-400">
                     <feat.icon className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-white mb-1.5">{feat.title}</h3>
-                    <p className="text-sm text-slate-500 leading-relaxed">{feat.desc}</p>
+                    <h3 className="font-bold text-white mb-1.5 uppercase tracking-tight">{feat.title}</h3>
+                    <p className="text-sm text-gray-500 leading-relaxed font-medium">{feat.desc}</p>
                   </div>
                 </div>
               ))}
@@ -60,8 +60,8 @@ export default function SecuritySection() {
           </div>
 
           <div className="lg:w-1/2 relative">
-            <div className="glass-panel p-1 border-white/5 relative z-10 overflow-hidden group">
-              <div className="p-8 bg-slate-950/50 rounded-[19px]">
+            <div className="glass-panel p-1 border-white/5 relative z-10 overflow-hidden group bg-white/[0.01]">
+              <div className="p-8 bg-black/40 rounded-[19px]">
                 <div className="flex justify-between items-center mb-8">
                   <div className="flex items-center gap-3">
                     <div className="w-3 h-3 rounded-full bg-red-500/20 border border-red-500/50" />

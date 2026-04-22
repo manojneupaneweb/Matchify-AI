@@ -34,7 +34,7 @@ const STATS = [
 
 export default function StatsSection() {
   return (
-    <section id="stats" className="relative py-24 overflow-hidden">
+    <section id="stats" className="relative py-24 overflow-hidden bg-black">
       <div className="max-w-7xl mx-auto px-6 md:px-20 relative z-10">
         
         <div className="text-center mb-16">
@@ -48,17 +48,17 @@ export default function StatsSection() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {STATS.map((stat, i) => (
-            <div key={i} className="glass-panel p-8 group hover:-translate-y-2 transition-all duration-300">
+            <div key={i} className="glass-panel p-8 bg-white/[0.01] border-white/5 hover:bg-white/[0.03] group hover:-translate-y-2 transition-all duration-500">
               <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${stat.color} flex items-center justify-center mb-6 shadow-lg group-hover:shadow-xl transition-shadow`}>
                 <stat.icon className="w-7 h-7 text-white" />
               </div>
-              <div className="text-4xl font-extrabold mb-2 stat-value">
+              <div className="text-4xl font-black mb-2 stat-value tracking-tighter">
                 {stat.value}
               </div>
-              <div className="text-lg font-bold text-white mb-1">
+              <div className="text-lg font-bold text-white mb-1 uppercase tracking-tight">
                 {stat.label}
               </div>
-              <div className="text-sm text-slate-500 font-medium leading-relaxed">
+              <div className="text-xs text-gray-500 font-bold leading-relaxed uppercase tracking-widest opacity-80">
                 {stat.sub}
               </div>
             </div>

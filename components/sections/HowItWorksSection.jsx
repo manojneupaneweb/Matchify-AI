@@ -30,7 +30,7 @@ const STEPS = [
 
 export default function HowItWorksSection() {
   return (
-    <section id="how-it-works" className="py-28 md:py-40 relative flex flex-col items-center">
+    <section id="how-it-works" className="py-28 md:py-40 relative flex flex-col items-center bg-black">
       <div className="w-full max-w-7xl mx-auto px-6 md:px-20">
 
         {/* Header */}
@@ -56,7 +56,7 @@ export default function HowItWorksSection() {
               return (
                 <div
                   key={i}
-                  className="glass-panel p-8 text-center group hover:-translate-y-2 transition-all duration-300 animate-fade-in-up"
+                  className="glass-panel p-8 bg-white/[0.01] border-white/5 text-center group hover:-translate-y-2 transition-all duration-500 animate-fade-in-up"
                   style={{ animationDelay: `${i * 0.15}s` }}
                 >
                   {/* Number */}
@@ -79,8 +79,8 @@ export default function HowItWorksSection() {
                     </span>
                   </div>
 
-                  <h3 className="text-xl font-bold text-white mb-3">{step.title}</h3>
-                  <p className="text-slate-400 text-sm leading-relaxed">{step.desc}</p>
+                  <h3 className="text-xl font-bold text-white mb-3 uppercase tracking-tight">{step.title}</h3>
+                  <p className="text-gray-500 text-sm leading-relaxed font-medium">{step.desc}</p>
                 </div>
               );
             })}
