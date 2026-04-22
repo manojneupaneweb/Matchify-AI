@@ -76,9 +76,6 @@ export async function POST(req) {
       console.warn('Diagnostic (models list) error:', diagErr.message);
     }
 
-    // A mandatory delay to prevent rapid-fire quota exhaustion
-    await sleep(1000); 
-
     const formData = await req.formData();
     const file = formData.get('resume');
     const jobDescription = formData.get('jobDescription');
@@ -137,31 +134,17 @@ Return ONLY this JSON structure:
     let finalAiResponse = null;
     let lastError = null;
 
-    // 3. Fallback & Retry Logic Loop
+    // 3. Fallback & Retry Logic Loop: Fail fast to the next model
     for (const modelId of AVAILABLE_MODELS) {
       console.log(`Trying model: ${modelId}`);
-      
-      for (let attempt = 1; attempt <= 3; attempt++) {
-        try {
-          finalAiResponse = await attemptAnalysis(prompt, modelId);
-          if (finalAiResponse) break; // Success!
-        } catch (err) {
-          lastError = err;
-          console.warn(`Attempt ${attempt} for ${modelId} failed:`, err.message);
-          
-          // Handle 429 (Quota) specifically with a wait
-          if (err.message?.includes('429') || err.status === 429) {
-            const waitTime = attempt * 2000; // Exponential-ish backoff
-            console.warn(`Quota exceeded. Retrying in ${waitTime}ms...`);
-            await sleep(waitTime);
-          } else if (attempt < 3) {
-            await sleep(1000); // Small pause for other errors
-          }
-        }
+      try {
+        finalAiResponse = await attemptAnalysis(prompt, modelId);
+        if (finalAiResponse) break; // Success!
+      } catch (err) {
+        lastError = err;
+        console.warn(`Model ${modelId} failed:`, err.message);
+        // Immediately try the next model instead of sleeping to ensure fast response times
       }
-      
-      if (finalAiResponse) break; // Success with current model
-      console.warn(`${modelId} failed after all retries. Falling back...`);
     }
 
     if (!finalAiResponse) {

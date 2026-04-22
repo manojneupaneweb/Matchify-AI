@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import pdf from 'pdf-parse/lib/pdf-parse.js';
 
 // 1. Helper: Artificial delay
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
@@ -42,44 +42,51 @@ async function attemptGeneration(systemPrompt, userPrompt, modelId) {
 
 export async function POST(req) {
   try {
-    const { idea, tone = 'professional' } = await req.json();
+    const formData = await req.formData();
+    const file = formData.get('resume');
+    const jobDescription = formData.get('jobDescription');
 
-    if (!idea || !idea.trim()) {
-      return NextResponse.json({ error: 'Job idea/description is missing' }, { status: 400 });
+    if (!file || !jobDescription) {
+      return NextResponse.json({ error: 'Missing resume or job description' }, { status: 400 });
+    }
+
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+
+    let resumeText = '';
+    try {
+      const pdfData = await pdf(buffer);
+      resumeText = pdfData.text || '';
+    } catch (err) {
+      console.error('PDF parsing error:', err);
+      return NextResponse.json({ error: 'Failed to read PDF resume' }, { status: 400 });
     }
 
     const systemPrompt = `
-You are a senior HR manager and recruitment expert with deep knowledge of ATS (Applicant Tracking Systems) and job market trends.
-
-Your task is to transform short, incomplete, or informal job descriptions into fully structured, professional, and ATS-optimized job postings.
+You are an expert career coach and professional copywriter.
+Your task is to write a highly professional, compelling, and tailored cover letter based on the provided Resume and Job Description.
 
 Rules:
-- Always expand the input into a complete job description
-- Use clear headings and bullet points
-- Ensure the content is realistic and aligned with industry standards
-- Include relevant technical and soft skills
-- Avoid repetition and generic filler text
-- Keep tone ${tone} and concise
-- Do not invent unrealistic requirements
-
-Output MUST always be a valid JSON object following this EXACT structure (do not include markdown wrapping like \`\`\`json):
+- Make it sound natural, confident, and professional.
+- Highlight the candidate's strongest skills and experiences from their resume that directly match the job description.
+- Keep the length to about 3-4 paragraphs (approx 300-400 words).
+- Use a modern business letter format but omit placeholder addresses at the very top (start directly with a greeting like "Dear Hiring Manager," or "Dear [Company Name] Team,").
+- Ensure the tone is enthusiastic and tailored.
+- Do not make up facts or experiences that are not in the resume.
+- Output ONLY valid JSON in the exact structure below, with no markdown formatting around it:
 {
-  "title": "<Job Title>",
-  "summary": "<Job Summary>",
-  "responsibilities": ["<Responsibility 1>", "<Responsibility 2>", ...],
-  "skills": ["<Required Skill 1>", ...],
-  "qualifications": ["<Preferred Qualification 1>", ...],
-  "experience": "<Experience Requirements>"
+  "coverLetter": "<The complete text of the cover letter with \\n for line breaks>"
 }
 `;
 
     const userPrompt = `
-Convert the following short job description idea into a complete, professional, and ATS-friendly job description.
+Resume:
+${resumeText}
 
-User Input:
-"${idea}"
+Job Description:
+${jobDescription}
 
-Make sure to return ONLY the requested JSON format.
+Please generate the cover letter.
 `;
 
     let finalAiResponse = null;
@@ -111,7 +118,7 @@ Make sure to return ONLY the requested JSON format.
     return NextResponse.json(parsedResult);
 
   } catch (error) {
-    console.error('JD Generation Error:', error);
+    console.error('Cover Letter Generation Error:', error);
     return NextResponse.json({ 
       error: 'Generation failed', 
       message: error.message 

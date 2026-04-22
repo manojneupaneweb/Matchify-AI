@@ -13,6 +13,7 @@ import StatsSection from '@/components/sections/StatsSection';
 import SecuritySection from '@/components/sections/SecuritySection';
 import AnalyzerSection from '@/components/sections/AnalyzerSection';
 import JdGeneratorSection from '@/components/sections/JdGeneratorSection';
+import CoverLetterSection from '@/components/sections/CoverLetterSection';
 import TestimonialsSection from '@/components/sections/TestimonialsSection';
 import PricingSection from '@/components/sections/PricingSection';
 import FAQSection from '@/components/sections/FAQSection';
@@ -59,6 +60,9 @@ export default function MainContent() {
 
         <SectionDivider />
         <JdGeneratorSection />
+
+        <SectionDivider />
+        <CoverLetterSection />
 
         <SectionDivider />
         <IntegrationsSection />
