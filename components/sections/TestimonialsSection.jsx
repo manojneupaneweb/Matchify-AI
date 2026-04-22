@@ -45,7 +45,7 @@ const TESTIMONIALS = [
     avatar: 'PS',
     rating: 5,
     text: 'I was skeptical AI could really help, but the skills radar chart showed me exactly where I was weak for ML roles. Took the suggested courses, updated my resume, got the job.',
-    gradient: 'from-amber-500 to-orange-600',
+    gradient: 'from-blue-500 to-indigo-600',
   },
   {
     name: 'James Wilson',

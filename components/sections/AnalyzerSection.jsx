@@ -2,7 +2,7 @@
 import { Suspense, lazy } from 'react';
 import {
   Upload, FileText, Sparkles, ArrowRight,
-  CheckCircle2, XCircle,
+  CheckCircle2, XCircle, Clipboard
 } from 'lucide-react';
 
 const DropZone = lazy(() => import('@/components/DropZone'));
@@ -78,9 +78,26 @@ export default function AnalyzerSection({
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg flex-shrink-0">
                   <FileText className="w-5 h-5 text-white" />
                 </div>
-                <div>
-                  <h3 className="text-base font-semibold text-white">Job Description</h3>
-                  <p className="text-xs text-slate-500">Paste the full job posting</p>
+                <div className="flex-1 flex justify-between items-center pr-2">
+                  <div>
+                    <h3 className="text-base font-semibold text-white">Job Description</h3>
+                    <p className="text-xs text-slate-500">Paste the full job posting</p>
+                  </div>
+                  <button
+                    onClick={async () => {
+                      try {
+                        const text = await navigator.clipboard.readText();
+                        setJd(text);
+                      } catch (err) {
+                        console.error('Failed to read clipboard contents: ', err);
+                      }
+                    }}
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-colors"
+                    title="Paste from clipboard"
+                  >
+                    <Clipboard className="w-3.5 h-3.5" />
+                    Paste
+                  </button>
                 </div>
               </div>
 

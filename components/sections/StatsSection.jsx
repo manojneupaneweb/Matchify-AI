@@ -28,7 +28,7 @@ const STATS = [
     value: '85K+', 
     sub: 'Daily active job seekers',
     icon: Users,
-    color: 'from-amber-500 to-orange-600'
+    color: 'from-blue-500 to-indigo-600'
   }
 ];
 
