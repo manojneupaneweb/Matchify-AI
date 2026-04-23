@@ -2,14 +2,12 @@
 import { Target, BarChart3, Zap, Lightbulb, Shield, TrendingUp, FileSearch, Users } from 'lucide-react';
 
 const FEATURES = [
-  { icon: Target, title: 'AI-Powered Match Score', desc: 'Instantly see your percentage match against any job description with our 98% accurate AI engine.', stat: '98% Accuracy', color: 'from-violet-500 to-purple-600', bg: 'rgba(139,92,246,0.08)' },
-  { icon: BarChart3, title: 'Visual Skill Analytics', desc: 'Radar & pie charts visualize exactly which skills match, which are missing, and by how much.', stat: '6+ Metrics', color: 'from-cyan-500 to-blue-600', bg: 'rgba(6,182,212,0.08)' },
-  { icon: Zap, title: 'Results in 30 Seconds', desc: 'Our optimized AI pipeline delivers comprehensive analysis faster than any human recruiter.', stat: '< 30s Speed', color: 'from-blue-500 to-indigo-600', bg: 'rgba(59,130,246,0.08)' },
-  { icon: Lightbulb, title: 'Actionable Suggestions', desc: 'Get specific, tailored recommendations on exactly what to add, remove, or reword in your resume.', stat: '100% Specific', color: 'from-emerald-500 to-teal-600', bg: 'rgba(16,185,129,0.08)' },
-  { icon: Shield, title: 'ATS Optimization', desc: 'Beat Applicant Tracking Systems by ensuring your resume contains the right keywords in the right density.', stat: '95% ATS Pass', color: 'from-rose-500 to-red-600', bg: 'rgba(239,68,68,0.08)' },
-  { icon: TrendingUp, title: 'Progress Tracking', desc: 'Run multiple analyses and watch your match score climb as you refine your resume over time.', stat: 'Live History', color: 'from-indigo-500 to-violet-600', bg: 'rgba(99,102,241,0.08)' },
-  { icon: FileSearch, title: 'Keyword Gap Analysis', desc: 'See precisely which keywords the recruiter is looking for that are missing from your current resume.', stat: 'Full Coverage', color: 'from-pink-500 to-fuchsia-600', bg: 'rgba(236,72,153,0.08)' },
-  { icon: Users, title: 'Works All Industries', desc: 'From software engineering to healthcare to marketing — our AI adapts to any field and seniority level.', stat: 'All Fields', color: 'from-sky-500 to-cyan-600', bg: 'rgba(14,165,233,0.08)' },
+  { icon: Target, title: 'AI Resume Analysis', desc: 'Our flagship analyzer scans your resume against job descriptions with 98% accuracy, identifying critical match gaps.', stat: '98% Match Accuracy', color: 'from-violet-500 to-purple-600', bg: 'rgba(139,92,246,0.08)' },
+  { icon: FileSearch, title: 'Intelligent JD Generator', desc: 'Generate professional, SEO-optimized job descriptions in seconds based on simple role titles or requirements.', stat: 'Instant Generation', color: 'from-cyan-500 to-blue-600', bg: 'rgba(6,182,212,0.08)' },
+  { icon: Zap, title: 'AI Cover Letter Builder', desc: 'Craft perfectly tailored cover letters that match both your resume and the target job description automatically.', stat: '100% Tailored', color: 'from-blue-500 to-indigo-600', bg: 'rgba(59,130,246,0.08)' },
+  { icon: BarChart3, title: 'Visual Skill Mapping', desc: 'Get deep insights into your technical and soft skill alignment through interactive radar and pie charts.', stat: 'Deep Analytics', color: 'from-emerald-500 to-teal-600', bg: 'rgba(16,185,129,0.08)' },
+  { icon: Shield, title: 'ATS Keyword Optimizer', desc: 'Beat recruitment filters by discovering and adding the exact keywords ATS systems are programmed to find.', stat: 'ATS-Proof', color: 'from-rose-500 to-red-600', bg: 'rgba(239,68,68,0.08)' },
+  { icon: Lightbulb, title: 'Smart Career Insights', desc: 'Receive actionable AI suggestions on how to reword achievements and structure your documents for impact.', stat: 'Actionable Tips', color: 'from-indigo-500 to-violet-600', bg: 'rgba(99,102,241,0.08)' },
 ];
 
 export default function FeaturesSection() {

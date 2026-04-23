@@ -1,5 +1,6 @@
 'use client';
 import { Star, Quote } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const TESTIMONIALS = [
   {
@@ -59,59 +60,81 @@ const TESTIMONIALS = [
 ];
 
 export default function TestimonialsSection() {
-  return (
-    <section id="testimonials" className="py-28 md:py-40 flex flex-col items-center bg-black">
-      <div className="w-full max-w-7xl mx-auto px-6 md:px-20">
+  // Duplicate testimonials for infinite scroll effect
+  const doubledTestimonials = [...TESTIMONIALS, ...TESTIMONIALS];
 
+  return (
+    <section id="testimonials" className="py-28 md:py-40 flex flex-col items-center bg-black overflow-hidden">
+      <div className="w-full max-w-7xl mx-auto px-6 md:px-20 mb-16">
         {/* Header */}
-        <div className="text-center mb-16 animate-fade-in-up">
+        <div className="text-center animate-fade-in-up">
           <div className="badge mb-4">
-            <Star className="w-3 h-3 fill-amber-400 text-amber-400" /> Success Stories
+            <Star className="w-3 h-3 fill-violet-400 text-violet-400" /> AI Tool Reviews
           </div>
           <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
-            They Got the Job.{' '}
-            <span className="gradient-text">So Can You.</span>
+            Real Results from our{' '}
+            <span className="gradient-text">AI Toolkit.</span>
           </h2>
           <p className="text-slate-400 max-w-xl mx-auto text-lg">
-            Join thousands of job seekers who've transformed their career trajectory with Matchify AI.
+            See how job seekers are leveraging our AI Resume Analyzer, JD Generator, and AI Cover Letter Builder to secure top roles.
           </p>
         </div>
+      </div>
 
-        {/* Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {TESTIMONIALS.map((t, i) => (
+      {/* Marquee Container */}
+      <div className="relative w-full overflow-hidden py-10">
+        {/* Gradients for smooth edges - matching the "space" feel */}
+        <div className="absolute left-0 top-0 bottom-0 w-20 md:w-40 bg-gradient-to-r from-black to-transparent z-10" />
+        <div className="absolute right-0 top-0 bottom-0 w-20 md:w-40 bg-gradient-to-l from-black to-transparent z-10" />
+
+        <div className="max-w-7xl mx-auto px-6 md:px-20">
+          <motion.div
+            className="flex gap-6 w-max"
+            animate={{
+              x: [0, -1920], // Adjusted based on expected content width
+            }}
+            transition={{
+              duration: 30,
+              repeat: Infinity,
+              ease: "linear",
+            }}
+            whileHover={{ animationPlayState: 'paused' }}
+          >
+            {doubledTestimonials.map((t, i) => (
               <div
                 key={i}
-                className="glass-panel p-7 bg-white/[0.01] border-white/5 group hover:-translate-y-2 transition-all duration-500 relative overflow-hidden animate-fade-in-up"
-                style={{ animationDelay: `${i * 0.1}s` }}
+                className="w-[350px] md:w-[400px] glass-panel p-7 bg-white/[0.01] border-white/5 group hover:border-violet-500/30 transition-all duration-500 relative overflow-hidden"
               >
-              {/* Quote icon */}
-              <Quote className="absolute top-5 right-5 w-8 h-8 text-white/4 group-hover:text-white/8 transition-colors" />
+                {/* Quote icon */}
+                <Quote className="absolute top-5 right-5 w-8 h-8 text-white/4 group-hover:text-white/8 transition-colors" />
 
-              {/* Stars */}
-              <div className="flex items-center gap-0.5 mb-4">
-                {[...Array(t.rating)].map((_, j) => (
-                  <Star key={j} className="w-4 h-4 fill-amber-400 text-amber-400" />
-                ))}
-              </div>
-
-              {/* Text */}
-              <p className="text-gray-400 text-sm leading-relaxed mb-6 italic font-medium opacity-90">"{t.text}"</p>
-
-              {/* Author */}
-              <div className="flex items-center gap-3 mt-auto pt-4 border-t border-white/[0.06]">
-                <div className={`w-11 h-11 rounded-full bg-gradient-to-br ${t.gradient} flex items-center justify-center text-white text-sm font-bold flex-shrink-0 shadow-lg`}>
-                  {t.avatar}
+                {/* Stars */}
+                <div className="flex items-center gap-0.5 mb-4">
+                  {[...Array(t.rating)].map((_, j) => (
+                    <Star key={j} className="w-4 h-4 fill-violet-400 text-violet-400" />
+                  ))}
                 </div>
-                <div>
-                  <p className="font-semibold text-white text-sm">{t.name}</p>
-                  <p className="text-xs text-slate-500">{t.role} <span className="text-slate-600">at</span> <span className="text-slate-400">{t.company}</span></p>
+
+                {/* Text */}
+                <p className="text-gray-400 text-sm leading-relaxed mb-6 italic font-medium opacity-90">"{t.text}"</p>
+
+                {/* Author */}
+                <div className="flex items-center gap-3 mt-auto pt-4 border-t border-white/[0.06]">
+                  <div className={`w-11 h-11 rounded-full bg-gradient-to-br ${t.gradient} flex items-center justify-center text-white text-sm font-bold flex-shrink-0 shadow-lg`}>
+                    {t.avatar}
+                  </div>
+                  <div>
+                    <p className="font-semibold text-white text-sm">{t.name}</p>
+                    <p className="text-xs text-slate-500">{t.role} <span className="text-slate-600">at</span> <span className="text-slate-400">{t.company}</span></p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </motion.div>
         </div>
       </div>
+
     </section>
   );
 }
+

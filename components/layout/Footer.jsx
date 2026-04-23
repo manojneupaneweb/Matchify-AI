@@ -2,10 +2,30 @@
 import { Sparkles, GitFork, ExternalLink, Mail, ArrowUpRight } from 'lucide-react';
 
 const FOOTER_LINKS = {
-  Product: ['Analyzer', 'Features', 'Pricing', 'Changelog'],
-  Company: ['About Us', 'Blog', 'Careers', 'Press'],
-  Support: ['Documentation', 'FAQ', 'Contact Us', 'Status'],
-  Legal: ['Privacy Policy', 'Terms of Service', 'Cookie Policy', 'GDPR'],
+  Product: [
+    { label: 'Resume Analyzer', href: '#analyzer' },
+    { label: 'JD Generator', href: '#jd-generator' },
+    { label: 'Cover Letter Builder', href: '#cover-letter' },
+    { label: 'Features', href: '#features' },
+    { label: 'Pricing', href: '#pricing' }
+  ],
+  Company: [
+    { label: 'About Us', href: '#' },
+    { label: 'Blog', href: '#' },
+    { label: 'Careers', href: '#' },
+    { label: 'Press', href: '#' }
+  ],
+  Support: [
+    { label: 'Documentation', href: '#' },
+    { label: 'Contact Us', href: '#' },
+    { label: 'Status', href: '#' }
+  ],
+  Legal: [
+    { label: 'Privacy Policy', href: '/legal#privacy' },
+    { label: 'Terms of Service', href: '/legal#terms' },
+    { label: 'Cookie Policy', href: '/legal#cookies' },
+    { label: 'GDPR', href: '/legal#gdpr' }
+  ],
 };
 
 const SOCIAL = [
@@ -28,8 +48,8 @@ export default function Footer() {
           {/* Brand */}
           <div className="lg:w-80 flex-shrink-0">
             <div className="flex items-center gap-2.5 mb-4">
-              <div className="w-9 h-9 bg-gradient-to-br from-violet-500 to-cyan-400 rounded-xl flex items-center justify-center shadow-lg">
-                <Sparkles className="w-5 h-5 text-white" />
+              <div className="w-9 h-9 bg-gradient-to-br from-violet-500 to-cyan-400 rounded-xl flex items-center justify-center shadow-lg overflow-hidden">
+                <img src="/logo.png" alt="Matchify AI Logo" className="w-full h-full object-cover" />
               </div>
               <span className="text-xl font-bold bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">
                 Matchify AI
@@ -62,12 +82,12 @@ export default function Footer() {
                 <p className="text-xs font-semibold text-white uppercase tracking-wider mb-4">{section}</p>
                 <ul className="space-y-2.5">
                   {links.map((link) => (
-                    <li key={link}>
+                    <li key={link.label}>
                       <a
-                        href="#"
+                        href={link.href}
                         className="text-sm text-slate-400 hover:text-white transition-colors flex items-center gap-1 group"
                       >
-                        {link}
+                        {link.label}
                         <ArrowUpRight className="w-3 h-3 opacity-0 -translate-y-0.5 group-hover:opacity-100 group-hover:translate-y-0 transition-all" />
                       </a>
                     </li>
@@ -81,7 +101,7 @@ export default function Footer() {
         {/* Bottom: copyright + socials */}
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-8">
           <p className="text-sm text-gray-600 font-bold tracking-tight">
-            &copy; {new Date().getFullYear()} Matchify AI, Inc. All rights reserved. Made with ❤️ for job seekers.
+            &copy; {new Date().getFullYear()} Matchify AI, Inc. All rights reserved. Developed by <a href="https://manoj-neupane.com.np/" target="_blank" rel="noopener noreferrer" className="text-violet-400 hover:text-violet-300 transition-colors">Manoj Neupane</a>
           </p>
           <div className="flex items-center gap-2">
             {SOCIAL.map(({ icon: Icon, label, href }) => (
