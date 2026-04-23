@@ -163,13 +163,13 @@ export default function Navbar({ activeSection }) {
 
       {/* Mobile Menu */}
       {mobileOpen && (
-        <div className="lg:hidden border-t border-white/[0.06] bg-[rgba(6,9,23,0.95)] backdrop-blur-2xl animate-fade-in">
-          <div className="max-w-7xl mx-auto px-4 py-4 space-y-1">
+        <div className="lg:hidden border-t border-white/[0.08] bg-[#060917]/98 backdrop-blur-3xl animate-fade-in overflow-hidden shadow-2xl">
+          <div className="max-w-7xl mx-auto px-6 py-8 space-y-2">
             {NAV_LINKS.map((link) => (
               <button
                 key={link.href}
                 onClick={() => handleNav(link.href)}
-                className="w-full text-left px-4 py-3 text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 rounded-xl transition-colors"
+                className="w-full text-left px-5 py-4 text-base font-semibold text-slate-300 hover:text-white hover:bg-white/5 rounded-2xl transition-all active:scale-[0.98]"
               >
                 {link.label}
               </button>

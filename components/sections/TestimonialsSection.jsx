@@ -64,37 +64,37 @@ export default function TestimonialsSection() {
   const doubledTestimonials = [...TESTIMONIALS, ...TESTIMONIALS];
 
   return (
-    <section id="testimonials" className="py-28 md:py-40 flex flex-col items-center bg-black overflow-hidden">
-      <div className="w-full max-w-7xl mx-auto px-6 md:px-20 mb-16">
+    <section id="testimonials" className="py-20 md:py-40 flex flex-col items-center bg-black overflow-hidden">
+      <div className="w-full max-w-7xl mx-auto px-6 md:px-20 mb-12 md:mb-16">
         {/* Header */}
         <div className="text-center animate-fade-in-up">
           <div className="badge mb-4">
             <Star className="w-3 h-3 fill-violet-400 text-violet-400" /> AI Tool Reviews
           </div>
-          <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
+          <h2 className="text-2xl md:text-5xl font-bold text-white mb-4">
             Real Results from our{' '}
             <span className="gradient-text">AI Toolkit.</span>
           </h2>
-          <p className="text-slate-400 max-w-xl mx-auto text-lg">
+          <p className="text-slate-400 max-w-xl mx-auto text-sm md:text-lg">
             See how job seekers are leveraging our AI Resume Analyzer, JD Generator, and AI Cover Letter Builder to secure top roles.
           </p>
         </div>
       </div>
 
       {/* Marquee Container */}
-      <div className="relative w-full overflow-hidden py-10">
+      <div className="relative w-full overflow-hidden py-6 md:py-10">
         {/* Gradients for smooth edges - matching the "space" feel */}
         <div className="absolute left-0 top-0 bottom-0 w-20 md:w-40 bg-gradient-to-r from-black to-transparent z-10" />
         <div className="absolute right-0 top-0 bottom-0 w-20 md:w-40 bg-gradient-to-l from-black to-transparent z-10" />
 
         <div className="max-w-7xl mx-auto px-6 md:px-20">
           <motion.div
-            className="flex gap-6 w-max"
+            className="flex gap-4 md:gap-6 w-max"
             animate={{
-              x: [0, -1920], // Adjusted based on expected content width
+              x: [0, "-50%"],
             }}
             transition={{
-              duration: 30,
+              duration: 40,
               repeat: Infinity,
               ease: "linear",
             }}
@@ -103,7 +103,7 @@ export default function TestimonialsSection() {
             {doubledTestimonials.map((t, i) => (
               <div
                 key={i}
-                className="w-[350px] md:w-[400px] glass-panel p-7 bg-white/[0.01] border-white/5 group hover:border-violet-500/30 transition-all duration-500 relative overflow-hidden"
+                className="w-[280px] sm:w-[350px] md:w-[400px] glass-panel p-6 md:p-7 bg-white/[0.01] border-white/5 group hover:border-violet-500/30 transition-all duration-500 relative overflow-hidden"
               >
                 {/* Quote icon */}
                 <Quote className="absolute top-5 right-5 w-8 h-8 text-white/4 group-hover:text-white/8 transition-colors" />

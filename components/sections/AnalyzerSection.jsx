@@ -20,25 +20,25 @@ export default function AnalyzerSection({
 }) {
 
   return (
-    <section id="analyzer" className="py-16 md:py-24 relative flex flex-col items-center bg-black">
+    <section id="analyzer" className="py-12 md:py-24 relative flex flex-col items-center bg-black">
       <div className="w-full max-w-7xl mx-auto px-6 md:px-20">
 
         {/* Header */}
-        <div className="text-center mb-12 animate-fade-in-up">
+        <div className="text-center mb-10 md:mb-12 animate-fade-in-up">
           <div className="badge mb-4">
             <Sparkles className="w-3 h-3" /> Live Analyzer
           </div>
-          <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
+          <h2 className="text-2xl md:text-5xl font-bold text-white mb-4">
             Analyze Your Resume{' '}
             <span className="gradient-text">Right Now</span>
           </h2>
-          <p className="text-slate-400 max-w-xl mx-auto text-lg">
+          <p className="text-slate-400 max-w-xl mx-auto text-sm md:text-lg">
             Get your match score, keyword gaps, and personalized suggestions in under 30 seconds.
           </p>
         </div>
 
         {/* ── Input Panel ── */}
-        <div className="glass-panel p-6 md:p-10 mb-10 bg-white/[0.01] border-white/5 shadow-2xl relative z-10">
+        <div className="glass-panel p-5 md:p-10 mb-8 md:mb-10 bg-white/[0.01] border-white/5 shadow-2xl relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
             {/* Resume Upload */}

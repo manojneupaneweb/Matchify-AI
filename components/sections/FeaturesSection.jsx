@@ -12,23 +12,23 @@ const FEATURES = [
 
 export default function FeaturesSection() {
   return (
-    <section id="features" className="py-28 md:py-40 flex flex-col items-center bg-black">
+    <section id="features" className="py-20 md:py-40 flex flex-col items-center bg-black">
       <div className="w-full max-w-7xl mx-auto px-6 md:px-20">
 
         {/* Header */}
-        <div className="text-center mb-16 animate-fade-in-up">
+        <div className="text-center mb-12 md:mb-16 animate-fade-in-up">
           <div className="badge mb-4">Powerful Features</div>
-          <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
+          <h2 className="text-2xl md:text-5xl font-bold text-white mb-4">
             Everything You Need to{' '}
             <span className="gradient-text">Get Hired</span>
           </h2>
-          <p className="text-slate-400 max-w-2xl mx-auto text-lg">
+          <p className="text-slate-400 max-w-2xl mx-auto text-sm md:text-lg">
             Our AI-powered platform gives you every unfair advantage in your job search.
           </p>
         </div>
 
         {/* Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
           {FEATURES.map((feat, i) => {
             const Icon = feat.icon;
             return (

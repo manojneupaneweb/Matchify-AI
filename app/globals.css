@@ -26,7 +26,13 @@
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 80px;
+  scroll-padding-top: 64px; /* Default for mobile header (h-16) */
+}
+
+@media (min-width: 768px) {
+  html {
+    scroll-padding-top: 80px; /* For desktop header (h-20) */
+  }
 }
 
 body {
@@ -63,7 +69,13 @@ h6 {
 }
 
 section {
-  scroll-margin-top: 80px;
+  scroll-margin-top: 64px;
+}
+
+@media (min-width: 768px) {
+  section {
+    scroll-margin-top: 80px;
+  }
 }
 
 /* ── Glass Panel ─────────────────────────────────── */

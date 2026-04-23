@@ -93,7 +93,7 @@ export default function HeroSection({ onScrollToAnalyzer, liveStats }) {
         </div>
 
         {/* Heading */}
-        <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold leading-[1.08] mb-6 animate-fade-in-up delay-100">
+        <h1 className="text-3xl sm:text-5xl md:text-7xl font-extrabold leading-tight md:leading-[1.08] mb-4 md:mb-6 animate-fade-in-up delay-100">
           <span className="text-white">Land Your </span>
           <span className="gradient-text">Dream Job</span>
           <br className="hidden sm:block" />
@@ -101,37 +101,37 @@ export default function HeroSection({ onScrollToAnalyzer, liveStats }) {
         </h1>
 
         {/* Sub-heading */}
-        <p className="max-w-2xl mx-auto text-lg md:text-xl text-slate-400 mb-10 leading-relaxed animate-fade-in-up delay-200">
+        <p className="max-w-2xl mx-auto text-base md:text-xl text-slate-400 mb-8 md:mb-10 leading-relaxed animate-fade-in-up delay-200">
           Upload your resume, paste a job description, and get instant AI analysis —{' '}
           <span className="text-slate-200 font-medium">match score, missing keywords, and actionable improvements</span> in seconds.
         </p>
 
         {/* CTAs */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-14 animate-fade-in-up delay-300">
+        <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center mb-10 md:mb-14 animate-fade-in-up delay-300">
           <button
             onClick={onScrollToAnalyzer}
-            className="btn-primary text-base px-8 py-4 rounded-2xl animate-glow"
+            className="btn-primary text-sm md:text-base px-6 md:px-8 py-3.5 md:py-4 rounded-xl md:rounded-2xl animate-glow"
           >
             <Sparkles className="w-5 h-5" />
             Analyze My Resume — Free
             <ArrowRight className="w-5 h-5" />
           </button>
-          <button className="btn-secondary text-base px-8 py-4 rounded-2xl flex items-center gap-2">
+          <button className="btn-secondary text-sm md:text-base px-6 md:px-8 py-3.5 md:py-4 rounded-xl md:rounded-2xl flex items-center gap-2">
             <Play className="w-5 h-5 text-violet-400" />
             See How It Works
           </button>
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto mb-14 animate-fade-in-up delay-400">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 max-w-3xl mx-auto mb-10 md:mb-14 animate-fade-in-up delay-400">
           {STATS.map(({ icon: Icon, value, label, color }, i) => (
-            <div key={i} className="glass-panel p-5 flex items-center gap-4 bg-white/[0.02] border-white/5 hover:bg-white/[0.04]">
-              <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${color} flex items-center justify-center flex-shrink-0 shadow-lg brightness-90`}>
-                <Icon className="w-6 h-6 text-white" />
+            <div key={i} className="glass-panel p-4 md:p-5 flex items-center gap-4 bg-white/[0.02] border-white/5 hover:bg-white/[0.04]">
+              <div className={`w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-gradient-to-br ${color} flex items-center justify-center flex-shrink-0 shadow-lg brightness-90`}>
+                <Icon className="w-5 h-5 md:w-6 md:h-6 text-white" />
               </div>
               <div className="text-left">
-                <div className="text-2xl font-extrabold stat-value tracking-tight">{value}</div>
-                <div className="text-[10px] text-gray-500 mt-0.5 font-bold uppercase tracking-wider">{label}</div>
+                <div className="text-xl md:text-2xl font-extrabold stat-value tracking-tight">{value}</div>
+                <div className="text-[9px] md:text-[10px] text-gray-500 mt-0.5 font-bold uppercase tracking-wider">{label}</div>
               </div>
             </div>
           ))}

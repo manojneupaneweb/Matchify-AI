@@ -32,14 +32,24 @@ export function useHome() {
 
   /* ── Track active section for Navbar highlight ──────────────────── */
   useEffect(() => {
-    const sections = ['hero', 'analyzer', 'how-it-works', 'features', 'testimonials', 'pricing', 'faq', 'cta'];
+    const sections = ['hero', 'analyzer', 'jd-generator', 'cover-letter', 'features', 'testimonials', 'pricing', 'faq', 'cta'];
     const observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) setActiveSection(entry.target.id);
-        });
+        // Find sections that are currently intersecting
+        const visibleSections = entries.filter(entry => entry.isIntersecting);
+        
+        if (visibleSections.length > 0) {
+          // Priority: pick the section that is closest to the top of our "active zone"
+          // This avoids jumping over small sections
+          const bestSection = visibleSections.reduce((prev, current) => {
+            return Math.abs(current.boundingClientRect.top) < Math.abs(prev.boundingClientRect.top) 
+              ? current 
+              : prev;
+          });
+          setActiveSection(bestSection.target.id);
+        }
       },
-      { threshold: 0.3, rootMargin: '-80px 0px -40% 0px' }
+      { threshold: [0.1, 0.2], rootMargin: '-10% 0px -50% 0px' }
     );
     sections.forEach((id) => {
       const el = document.getElementById(id);
