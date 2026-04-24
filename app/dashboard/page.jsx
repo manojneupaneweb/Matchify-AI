@@ -110,284 +110,240 @@ export default async function DashboardPage() {
   const recentScans = [...allUserResults].reverse().slice(0, 5);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 pb-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="min-h-screen bg-transparent pb-12">
+      <div className="max-w-7xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-1000">
         
-        {/* SECTION 1: HEADER & HERO (3 Sections: Welcome, Profile Completion, Quick Actions) */}
-        <header className="relative mb-8 p-8 bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-500/10 to-purple-600/10 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-cyan-500/10 to-blue-500/10 rounded-full blur-3xl"></div>
+        {/* SECTION 1: HEADER & HERO */}
+        <header className="glass-panel relative mb-10 p-8 md:p-12 overflow-hidden border-white/5 bg-white/[0.02]">
+          <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-to-br from-violet-600/10 to-purple-600/10 rounded-full blur-[100px]" />
+          <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-cyan-500/10 to-blue-500/10 rounded-full blur-[80px]" />
           
-          <div className="relative flex flex-col lg:flex-row items-start lg:items-center gap-8">
+          <div className="relative flex flex-col lg:flex-row items-center gap-10 text-center lg:text-left">
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl blur-xl opacity-50"></div>
-              <div className="relative w-24 h-24 rounded-2xl bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center text-white text-4xl font-bold shadow-xl transform hover:rotate-3 transition-transform duration-300">
+              <div className="absolute inset-0 bg-gradient-to-br from-violet-600 to-cyan-600 rounded-3xl blur-2xl opacity-20 group-hover:opacity-40 transition-opacity" />
+              <div className="relative w-28 h-28 md:w-32 md:h-32 rounded-3xl bg-gradient-to-br from-violet-600 via-purple-600 to-cyan-600 flex items-center justify-center text-white text-5xl font-black shadow-2xl transform hover:rotate-3 transition-transform duration-500">
                 {session?.user?.name ? session.user.name.charAt(0).toUpperCase() : 'U'}
               </div>
             </div>
             
             <div className="flex-1">
-              <div className="flex flex-wrap items-center gap-3 mb-4">
-                <h1 className="text-3xl md:text-5xl font-black bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 dark:from-white dark:via-gray-200 dark:to-white bg-clip-text text-transparent italic">
-                  WELCOME BACK, {session.user.name?.toUpperCase() || 'USER'}
+              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 mb-6">
+                <h1 className="text-4xl md:text-6xl font-black text-white tracking-tighter uppercase italic">
+                  WELCOME, {session.user.name?.split(' ')[0] || 'USER'}
                 </h1>
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-green-500/10 text-green-600 border border-green-200/50">
-                  <span className="w-2 h-2 rounded-full bg-green-500 mr-2 animate-pulse"></span>
+                <span className="badge">
                   LIVE ANALYTICS
                 </span>
               </div>
               
-              <div className="flex flex-wrap items-center gap-8">
-                <div className="flex flex-col gap-2">
-                  <p className="text-gray-500 dark:text-gray-400 flex items-center gap-2 text-sm font-medium">
-                    <Mail className="w-4 h-4" /> {session.user.email}
+              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-10">
+                <div className="space-y-2">
+                  <p className="text-slate-400 flex items-center justify-center lg:justify-start gap-2 text-sm font-bold tracking-tight">
+                    <Mail className="w-4 h-4 text-violet-400" /> {session.user.email}
                   </p>
                   {userDoc?.phone && (
-                    <p className="text-gray-500 dark:text-gray-400 flex items-center gap-2 text-sm font-medium">
-                      <Phone className="w-4 h-4" /> {userDoc.phone}
+                    <p className="text-slate-400 flex items-center justify-center lg:justify-start gap-2 text-sm font-bold tracking-tight">
+                      <Phone className="w-4 h-4 text-cyan-400" /> {userDoc.phone}
                     </p>
                   )}
                 </div>
-                <div className="flex flex-col gap-2 min-w-[200px]">
-                  <div className="flex justify-between text-xs font-black uppercase tracking-tighter mb-1">
-                    <span className="text-gray-400">Profile Completion</span>
-                    <span className="text-blue-600">{profileCompletion}%</span>
+                <div className="flex flex-col gap-3 min-w-[240px]">
+                  <div className="flex justify-between text-[10px] font-black uppercase tracking-widest mb-1">
+                    <span className="text-slate-500">Profile Completion</span>
+                    <span className="text-violet-400">{profileCompletion}%</span>
                   </div>
-                  <div className="h-2 w-full bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden border border-gray-200/50 dark:border-gray-600/50">
+                  <div className="progress-bar-container">
                     <div 
-                      className="h-full bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600 transition-all duration-1000 shadow-[0_0_10px_rgba(59,130,246,0.5)]" 
+                      className="progress-bar" 
                       style={{ width: `${profileCompletion}%` }}
-                    ></div>
+                    />
                   </div>
                 </div>
               </div>
             </div>
             
-            <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-              <Link href="/#analyzer" className="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-bold shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2 transition-all hover:-translate-y-0.5">
-                <Zap className="w-4 h-4" /> New Scan
+            <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
+              <Link href="/#analyzer" className="btn-primary px-8 py-4 shadow-violet-500/20">
+                <Zap className="w-5 h-5" /> New Analysis
               </Link>
-              <Link href="/profile" className="flex-1 px-6 py-3 bg-white dark:bg-gray-700 text-gray-700 dark:text-white rounded-2xl font-bold border border-gray-200 dark:border-gray-600 flex items-center justify-center gap-2 transition-all hover:bg-gray-50 dark:hover:bg-gray-600">
-                Edit Profile
+              <Link href="/profile" className="btn-secondary px-8 py-4">
+                View Profile
               </Link>
             </div>
           </div>
         </header>
 
-        {/* SECTION 2: KPI QUAD (4 Sections: Analyses, Avg Score, Excellent, Growth) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-700 relative overflow-hidden group">
-            <div className="absolute -right-4 -top-4 w-20 h-20 bg-blue-500/5 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
-            <div className="flex items-center justify-between mb-4">
-              <span className="p-3 bg-blue-50 dark:bg-blue-900/20 text-blue-600 rounded-2xl"><BarChart3 className="w-5 h-5" /></span>
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Total Scans</span>
+        {/* SECTION 2: KPI QUAD */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+          {[
+            { icon: BarChart3, label: 'TOTAL SCANS', value: totalUserAnalyses, sub: 'Analyses generated', color: 'text-blue-400' },
+            { icon: Target, label: 'AVG SCORE', value: `${userSuccessRate}%`, sub: `${momentum > 0 ? '+' : ''}${momentum}% momentum`, color: 'text-violet-400' },
+            { icon: Award, label: 'MASTERY', value: excellentMatches, sub: excellentMatches > 0 ? 'Excellence achieved' : 'Aiming for 80+', color: 'text-emerald-400' },
+            { icon: Activity, label: 'VELOCITY', value: scanVelocity, sub: 'Scans per day avg', color: 'text-cyan-400' },
+          ].map((kpi, i) => (
+            <div key={i} className="glass-panel p-8 hover:scale-[1.02] border-white/5 bg-white/[0.02] group">
+              <div className="flex items-center justify-between mb-6">
+                <span className={`p-3 bg-white/5 rounded-2xl ${kpi.color} group-hover:scale-110 transition-transform duration-300`}>
+                  <kpi.icon className="w-6 h-6" />
+                </span>
+                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{kpi.label}</span>
+              </div>
+              <p className="text-4xl font-extrabold stat-value tracking-tighter mb-2">{kpi.value}</p>
+              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{kpi.sub}</p>
             </div>
-            <p className="text-4xl font-black text-gray-900 dark:text-white">{totalUserAnalyses}</p>
-            <p className="text-xs text-gray-500 mt-2 font-medium">Analyses generated to date</p>
-          </div>
-
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-700 relative overflow-hidden group">
-            <div className="absolute -right-4 -top-4 w-20 h-20 bg-purple-500/5 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
-            <div className="flex items-center justify-between mb-4">
-              <span className="p-3 bg-purple-50 dark:bg-purple-900/20 text-purple-600 rounded-2xl"><Target className="w-5 h-5" /></span>
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Avg Score</span>
-            </div>
-            <div className="flex items-baseline gap-2">
-              <p className="text-4xl font-black text-gray-900 dark:text-white">{userSuccessRate}%</p>
-            </div>
-            <div className="flex items-center gap-1 mt-2">
-               <TrendingUp className={`w-3 h-3 ${parseFloat(momentum) >= 0 ? 'text-green-500' : 'text-red-500'}`} />
-               <span className={`text-xs font-bold ${parseFloat(momentum) >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                 {momentum > 0 ? `+${momentum}` : momentum}% momentum
-               </span>
-            </div>
-          </div>
-
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-700 relative overflow-hidden group">
-            <div className="absolute -right-4 -top-4 w-20 h-20 bg-green-500/5 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
-            <div className="flex items-center justify-between mb-4">
-              <span className="p-3 bg-green-50 dark:bg-green-900/20 text-green-600 rounded-2xl"><Award className="w-5 h-5" /></span>
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Mastery</span>
-            </div>
-            <p className="text-4xl font-black text-gray-900 dark:text-white">{excellentMatches}</p>
-            <p className="text-xs text-green-600 mt-2 font-bold flex items-center gap-1">
-              <CheckCircle className="w-3 h-3" /> {excellentMatches > 0 ? 'Excellence achieved' : 'Aiming for 80+'}
-            </p>
-          </div>
-
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-700 relative overflow-hidden group">
-            <div className="absolute -right-4 -top-4 w-20 h-20 bg-orange-500/5 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
-            <div className="flex items-center justify-between mb-4">
-              <span className="p-3 bg-orange-50 dark:bg-orange-900/20 text-orange-600 rounded-2xl"><Activity className="w-5 h-5" /></span>
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Velocity</span>
-            </div>
-            <p className="text-4xl font-black text-gray-900 dark:text-white">{scanVelocity}</p>
-            <p className="text-xs text-gray-500 mt-2 font-medium">Scans per day average</p>
-          </div>
+          ))}
         </div>
 
-        {/* SECTION 3: VISUAL ANALYTICS (3 Sections: Trend, Skill Radar, Keyword Coverage) */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          <div className="lg:col-span-1 bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-700">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
-              <PieChart className="w-5 h-5 text-purple-500" /> Skill Dimensions
-            </h3>
-            <div className="h-72">
-              <SkillsRadar data={skillAverages} />
+        {/* SECTION 3: VISUAL ANALYTICS */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
+          {[
+            { title: 'Skill Dimensions', icon: PieChart, color: 'text-violet-400', component: <SkillsRadar data={skillAverages} /> },
+            { title: 'Keyword Coverage', icon: Target, color: 'text-cyan-400', component: <KeywordCoverage matched={totalMatched} missing={totalMissing} /> },
+            { title: 'Success Trend', icon: TrendingUp, color: 'text-emerald-400', component: <UserScoreChart scores={chartData} /> },
+          ].map((analytics, i) => (
+            <div key={i} className="glass-panel p-8 border-white/5 bg-white/[0.02]">
+              <h3 className="text-sm font-black text-white uppercase tracking-widest mb-8 flex items-center gap-3">
+                <analytics.icon className={`w-5 h-5 ${analytics.color}`} /> {analytics.title}
+              </h3>
+              <div className="h-72">
+                {analytics.component}
+              </div>
             </div>
-          </div>
-
-          <div className="lg:col-span-1 bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-700">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
-              <Target className="w-5 h-5 text-blue-500" /> Keyword Coverage
-            </h3>
-            <div className="h-72">
-              <KeywordCoverage matched={totalMatched} missing={totalMissing} />
-            </div>
-          </div>
-
-          <div className="lg:col-span-1 bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-700">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-green-500" /> Success Trend
-            </h3>
-            <div className="h-72">
-               <UserScoreChart scores={chartData} />
-            </div>
-          </div>
+          ))}
         </div>
 
-        {/* SECTION 4: CONTENT INSIGHTS (3 Sections: Strengths, Gaps, Histogram) */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-700">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6">Core Competencies</h3>
-            <div className="space-y-4">
+        {/* SECTION 4: CONTENT INSIGHTS */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
+          <div className="glass-panel p-8 border-white/5 bg-white/[0.02]">
+            <h3 className="text-sm font-black text-white uppercase tracking-widest mb-8">Core Competencies</h3>
+            <div className="space-y-6">
               {topStrengths.map(([name, count], i) => (
-                <div key={i} className="flex flex-col gap-1">
-                  <div className="flex justify-between text-xs font-bold mb-1">
-                    <span className="text-gray-700 dark:text-gray-300">{name}</span>
-                    <span className="text-blue-500">{count} scans</span>
+                <div key={i} className="space-y-2">
+                  <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
+                    <span className="text-slate-300">{name}</span>
+                    <span className="text-violet-400">{count} SCANS</span>
                   </div>
-                  <div className="h-1.5 w-full bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
-                    <div className="h-full bg-blue-500 rounded-full" style={{ width: `${(count/totalUserAnalyses)*100}%` }}></div>
+                  <div className="progress-bar-container h-1.5">
+                    <div className="progress-bar" style={{ width: `${(count/totalUserAnalyses)*100}%` }}></div>
                   </div>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-700">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6">Strategic Skill Gaps</h3>
-            <div className="flex flex-wrap gap-2">
+          <div className="glass-panel p-8 border-white/5 bg-white/[0.02]">
+            <h3 className="text-sm font-black text-white uppercase tracking-widest mb-8">Strategic Skill Gaps</h3>
+            <div className="flex flex-wrap gap-3">
               {topMissingKeywords.map(([name, count], i) => (
-                <span key={i} className="px-3 py-1.5 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-xl text-xs font-bold border border-red-100/50 dark:border-red-900/50 flex items-center gap-2">
-                  {name} <span className="text-[10px] px-1.5 py-0.5 bg-red-600 text-white rounded-md">{count}</span>
+                <span key={i} className="px-4 py-2 bg-rose-500/5 text-rose-400 rounded-xl text-[10px] font-black uppercase tracking-widest border border-rose-500/10 flex items-center gap-2 hover:bg-rose-500/10 transition-colors">
+                  {name} <span className="bg-rose-500 text-white px-1.5 py-0.5 rounded-md text-[8px]">{count}</span>
                 </span>
               ))}
             </div>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-700">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6">Score Distribution</h3>
+          <div className="glass-panel p-8 border-white/5 bg-white/[0.02]">
+            <h3 className="text-sm font-black text-white uppercase tracking-widest mb-8">Score Distribution</h3>
             <div className="h-64">
               <ScoreDistribution buckets={buckets} />
             </div>
           </div>
         </div>
 
-        {/* SECTION 5: ACTION CENTER (3 Sections: Goal, Best Match, Roadmap) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
+        {/* SECTION 5: ACTION CENTER */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-10">
           {/* Goal Progress */}
-          <div className="lg:col-span-4 bg-gradient-to-br from-blue-600 to-indigo-700 p-8 rounded-3xl shadow-2xl flex flex-col justify-between text-white relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl"></div>
+          <div className="lg:col-span-4 glass-panel p-10 bg-gradient-to-br from-violet-600/20 to-purple-600/20 border-violet-500/20 flex flex-col justify-between relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-40 h-40 bg-violet-500/10 rounded-full blur-[60px]" />
             <div className="relative z-10">
-              <h3 className="text-lg font-bold mb-2">Mastery Goal</h3>
-              <p className="text-blue-100 text-xs mb-6">Targeting {targetScore}% overall average score</p>
+              <h3 className="text-sm font-black text-white uppercase tracking-widest mb-2">Mastery Goal</h3>
+              <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-10">Target: {targetScore}% Avg</p>
               
-              <div className="flex items-center justify-center mb-6">
-                <div className="relative w-32 h-32">
-                   <svg className="w-full h-full" viewBox="0 0 36 36">
-                     <path className="text-white/10" stroke="currentColor" strokeWidth="3" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                     <path className="text-white shadow-lg" stroke="currentColor" strokeWidth="3" strokeDasharray={`${goalProgress}, 100`} strokeLinecap="round" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+              <div className="flex items-center justify-center mb-10">
+                <div className="relative w-40 h-40">
+                   <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                     <circle cx="18" cy="18" r="16" fill="none" className="stroke-white/5" strokeWidth="2" />
+                     <circle cx="18" cy="18" r="16" fill="none" className="stroke-violet-500" strokeWidth="2" strokeDasharray={`${goalProgress} 100`} strokeLinecap="round" />
                    </svg>
-                   <div className="absolute inset-0 flex items-center justify-center font-black text-2xl tracking-tighter">
-                     {goalProgress}%
+                   <div className="absolute inset-0 flex flex-col items-center justify-center">
+                     <span className="text-4xl font-black text-white tracking-tighter">{goalProgress}%</span>
                    </div>
                 </div>
               </div>
-              <p className="text-center text-xs font-bold text-blue-200 uppercase tracking-widest">Progress to 90% Avg</p>
+              <p className="text-center text-[10px] font-black text-slate-500 uppercase tracking-widest group-hover:text-violet-400 transition-colors">Progress to Goal</p>
             </div>
           </div>
 
           {/* Best Match Spotlight */}
-          <div className="lg:col-span-8 bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-700 relative group overflow-hidden">
-             <div className="absolute top-0 right-0 p-4">
-                <Crown className="w-8 h-8 text-yellow-500 animate-bounce" />
+          <div className="lg:col-span-8 glass-panel p-10 border-white/5 bg-white/[0.02] relative group overflow-hidden">
+             <div className="absolute top-0 right-0 p-6">
+                <Crown className="w-10 h-10 text-yellow-500/40 group-hover:text-yellow-500 transition-colors duration-500" />
              </div>
-             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Best-in-Class Analysis</h3>
+             <h3 className="text-sm font-black text-white uppercase tracking-widest mb-10">Best-in-Class Analysis</h3>
              {bestMatch ? (
-               <div className="flex flex-col md:flex-row items-center gap-8">
-                  <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center text-white text-3xl font-black shadow-lg">
+               <div className="flex flex-col md:flex-row items-center gap-10">
+                  <div className="w-28 h-28 rounded-3xl bg-gradient-to-br from-yellow-500 to-orange-500 flex items-center justify-center text-white text-4xl font-black shadow-xl shadow-yellow-500/20 transform group-hover:rotate-6 transition-transform">
                     {bestMatch.score}
                   </div>
-                  <div className="flex-1 space-y-3">
-                    <p className="text-lg font-bold text-gray-900 dark:text-white">{bestMatch.resumeName}</p>
-                    <p className="text-sm text-gray-500 line-clamp-2 italic">"{bestMatch.funnyMessage}"</p>
+                  <div className="flex-1 space-y-4">
+                    <p className="text-2xl font-black text-white tracking-tight">{bestMatch.resumeName}</p>
+                    <p className="text-sm text-slate-400 italic font-medium leading-relaxed">"{bestMatch.funnyMessage}"</p>
                     <div className="flex flex-wrap gap-2">
                        {bestMatch.strengths.slice(0, 3).map((s, i) => (
-                         <span key={i} className="px-2 py-0.5 bg-green-50 dark:bg-green-900/20 text-green-600 rounded-md text-[10px] font-bold uppercase">{s}</span>
+                         <span key={i} className="px-3 py-1 bg-emerald-500/10 text-emerald-400 rounded-lg text-[9px] font-black uppercase tracking-widest border border-emerald-500/20">{s}</span>
                        ))}
                     </div>
                   </div>
-                  <Link href={`/dashboard/results/${bestMatch._id}`} className="px-6 py-2 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 rounded-xl font-bold text-sm hover:scale-105 transition-transform">
-                    Review Again
+                  <Link href={`/dashboard/results/${bestMatch._id}`} className="btn-primary px-8 py-3.5 text-sm">
+                    Re-Analyze
                   </Link>
                </div>
              ) : (
-               <p className="text-center py-12 text-gray-400 italic">No scans yet to determine a best match.</p>
+               <p className="text-center py-12 text-slate-500 font-bold uppercase tracking-widest italic">No benchmark data available yet.</p>
              )}
           </div>
         </div>
 
-        {/* SECTION 6: HISTORY & ROADMAP (2 Sections: Smart Roadmap, Recent Feed) */}
+        {/* SECTION 6: HISTORY & ROADMAP */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-700">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
-              <ListChecks className="w-5 h-5 text-blue-500" /> Smart Roadmap
+          <div className="glass-panel p-8 border-white/5 bg-white/[0.02]">
+            <h3 className="text-sm font-black text-white uppercase tracking-widest mb-8 flex items-center gap-3">
+              <ListChecks className="w-5 h-5 text-violet-400" /> Smart Roadmap
             </h3>
             <div className="space-y-4">
               {commonSuggestions.length > 0 ? commonSuggestions.map((text, i) => (
-                <div key={i} className="flex items-start gap-4 p-4 bg-gray-50 dark:bg-gray-900/50 rounded-2xl group hover:border-blue-200 border border-transparent transition-all">
-                  <div className="mt-1 w-6 h-6 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-600 flex items-center justify-center text-xs font-bold group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                <div key={i} className="flex items-start gap-5 p-5 bg-white/[0.02] rounded-2xl border border-white/5 hover:border-violet-500/30 transition-all group">
+                  <div className="mt-1 w-8 h-8 rounded-xl bg-violet-500/10 text-violet-400 flex items-center justify-center text-xs font-black group-hover:bg-violet-500 group-hover:text-white transition-all">
                     {i + 1}
                   </div>
-                  <p className="text-sm text-gray-600 dark:text-gray-300 font-medium leading-relaxed">{text}</p>
+                  <p className="text-sm text-slate-300 font-medium leading-relaxed">{text}</p>
                 </div>
               )) : (
-                <p className="text-center py-8 text-gray-400 italic">Complete more scans to generate a personalized roadmap.</p>
+                <p className="text-center py-10 text-slate-500 font-bold uppercase tracking-widest italic">Scan more resumes to unlock your roadmap.</p>
               )}
             </div>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-700">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
-              <History className="w-5 h-5 text-gray-400" /> Recent Scans
+          <div className="glass-panel p-8 border-white/5 bg-white/[0.02]">
+            <h3 className="text-sm font-black text-white uppercase tracking-widest mb-8 flex items-center gap-3">
+              <History className="w-5 h-5 text-slate-500" /> Recent Activity
             </h3>
             <div className="space-y-4">
               {recentScans.length > 0 ? recentScans.map((activity, i) => (
-                <a href={`/dashboard/results/${activity._id}`} key={i} className="group flex items-center justify-between p-4 rounded-2xl border border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all hover:scale-[1.01]">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-xs font-black shadow-md mt-1">
+                <Link href={`/dashboard/results/${activity._id}`} key={i} className="group flex items-center justify-between p-5 rounded-2xl border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] transition-all hover:scale-[1.01]">
+                  <div className="flex items-center gap-5">
+                    <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-500 flex items-center justify-center text-white text-sm font-black shadow-lg">
                       {activity.score}
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-gray-900 dark:text-white line-clamp-1">{activity.resumeName}</p>
-                      <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">{new Date(activity.createdAt).toLocaleDateString()} • {activity.score > 80 ? 'EXCELLENT' : 'IMPROVEMENT NEEDED'}</p>
+                      <p className="text-sm font-black text-white line-clamp-1">{activity.resumeName}</p>
+                      <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest mt-1">{new Date(activity.createdAt).toLocaleDateString()} • {activity.score > 80 ? 'OPTIMIZED' : 'NEEDS REFINEMENT'}</p>
                     </div>
                   </div>
-                  <ArrowUpRight className="w-5 h-5 text-gray-300 group-hover:text-blue-500 transition-colors" />
-                </a>
+                  <ArrowUpRight className="w-6 h-6 text-slate-700 group-hover:text-violet-400 transition-all" />
+                </Link>
               )) : (
-                <div className="text-center py-12 text-gray-400 italic">No analysis history found. Start your first scan today!</div>
+                <div className="text-center py-16 text-slate-500 font-bold uppercase tracking-widest italic">No recent activity detected.</div>
               )}
             </div>
           </div>

@@ -35,13 +35,20 @@ export default function UserScoreChart({ scores }) {
         label: 'Match Score (%)',
         data: sortedScores.map(s => s.score),
         fill: true,
-        borderColor: 'rgb(79, 70, 229)',
-        backgroundColor: 'rgba(79, 70, 229, 0.1)',
+        borderColor: 'rgba(139, 92, 246, 1)',
+        backgroundColor: (context) => {
+          const ctx = context.chart.ctx;
+          const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+          gradient.addColorStop(0, 'rgba(139, 92, 246, 0.2)');
+          gradient.addColorStop(1, 'rgba(139, 92, 246, 0)');
+          return gradient;
+        },
         tension: 0.4,
-        pointBackgroundColor: 'rgb(79, 70, 229)',
+        pointBackgroundColor: 'rgba(139, 92, 246, 1)',
         pointBorderColor: '#fff',
-        pointHoverRadius: 6,
+        pointHoverRadius: 8,
         pointRadius: 4,
+        borderWidth: 3,
       },
     ],
   };
@@ -56,10 +63,11 @@ export default function UserScoreChart({ scores }) {
       tooltip: {
         mode: 'index',
         intersect: false,
-        backgroundColor: 'rgba(17, 24, 39, 0.8)',
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
         padding: 12,
-        titleFont: { size: 14, weight: 'bold' },
-        bodyFont: { size: 13 },
+        cornerRadius: 12,
+        titleFont: { size: 12, weight: 'bold', family: 'Inter' },
+        bodyFont: { size: 12, family: 'Inter' },
         displayColors: false,
       },
     },
@@ -68,12 +76,13 @@ export default function UserScoreChart({ scores }) {
         beginAtZero: true,
         max: 100,
         grid: {
-          color: 'rgba(156, 163, 175, 0.1)',
+          color: 'rgba(255, 255, 255, 0.05)',
         },
         ticks: {
           stepSize: 20,
           callback: (value) => `${value}%`,
-          font: { size: 12 },
+          color: 'rgba(255, 255, 255, 0.3)',
+          font: { size: 10, weight: 'bold' },
         },
       },
       x: {
@@ -81,14 +90,15 @@ export default function UserScoreChart({ scores }) {
           display: false,
         },
         ticks: {
-          font: { size: 12 },
+          color: 'rgba(255, 255, 255, 0.3)',
+          font: { size: 10, weight: 'bold' },
         },
       },
     },
   };
 
   return (
-    <div className="h-64 w-full">
+    <div className="h-full w-full">
       <Line data={data} options={options} />
     </div>
   );

@@ -45,23 +45,23 @@ export default async function ResultDetailsPage({ params }) {
   };
 
   return (
-    <div className="max-w-5xl mx-auto py-8">
-      <div className="mb-8 p-6 bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col md:flex-row justify-between items-start md:items-center">
+    <div className="max-w-5xl mx-auto py-8 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+      <div className="glass-panel mb-10 p-8 border-white/5 bg-white/[0.02] flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-black text-white tracking-tighter italic uppercase mb-2">
             Analysis Report
           </h1>
-          <p className="text-gray-500 mt-1 flex items-center gap-2">
-            Target File: <span className="font-medium text-gray-700 dark:text-gray-300">{resultData.resumeName}</span>
+          <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+            Target Resource: <span className="text-violet-400">{resultData.resumeName}</span>
           </p>
         </div>
-        <div className="mt-4 md:mt-0 text-right">
-          <span className="text-sm text-gray-500">Analyzed on</span>
-          <p className="font-semibold text-gray-900 dark:text-white">{new Date(resultData.createdAt).toLocaleDateString()} at {new Date(resultData.createdAt).toLocaleTimeString()}</p>
+        <div className="md:text-right">
+          <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Timestamp</span>
+          <p className="font-bold text-slate-300">{new Date(resultData.createdAt).toLocaleDateString()} at {new Date(resultData.createdAt).toLocaleTimeString()}</p>
         </div>
       </div>
 
-      <div className="bg-white/50 backdrop-blur-sm rounded-3xl p-1 md:p-4 border border-indigo-500/10">
+      <div className="glass-panel p-2 md:p-8 border-white/5 bg-white/[0.02]">
         <ResultsDisplay results={uiResults} />
       </div>
     </div>
