@@ -9,10 +9,11 @@ import UserScoreChart from './UserScoreChart';
 import Link from 'next/link';
 import { SkillsRadar, KeywordCoverage, ScoreDistribution } from './DashboardAnalytics';
 import { 
-  Mail, Phone, MapPin, CheckCircle, Target, TrendingUp, 
-  Award, Zap, AlertTriangle, ArrowUpRight, ListChecks,
+  Target, TrendingUp, 
+  Award, Zap, ArrowUpRight, ListChecks,
   Crown, History, BarChart3, PieChart, Activity
 } from 'lucide-react';
+
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
@@ -101,11 +102,8 @@ export default async function DashboardPage() {
     : 0;
   const momentum = (lastThreeAvg - currentAvgNum).toFixed(1);
 
-  // User/Profile Fetch
+  // User/Profile Fetch (used for best match / scans only)
   const userDoc = await User.findOne({ email: session.user.email }).lean();
-  const profileFields = ['name', 'phone', 'address', 'profilePic'];
-  const completedFields = profileFields.filter(field => userDoc?.[field] && userDoc[field] !== '');
-  const profileCompletion = Math.round((completedFields.length / profileFields.length) * 100);
 
   const recentScans = [...allUserResults].reverse().slice(0, 5);
 
@@ -127,47 +125,27 @@ export default async function DashboardPage() {
             </div>
             
             <div className="flex-1">
-              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 mb-6">
-                <h1 className="text-4xl md:text-6xl font-black text-white tracking-tighter uppercase italic">
-                  WELCOME, {session.user.name?.split(' ')[0] || 'USER'}
+              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 mb-3">
+                <h1 className="text-4xl md:text-5xl font-black text-white tracking-tighter uppercase italic">
+                  SYSTEM OVERVIEW
                 </h1>
-                <span className="badge">
-                  LIVE ANALYTICS
+                <span className="badge bg-violet-500/20 text-violet-400 border-violet-500/20">
+                  REAL-TIME DATA
                 </span>
               </div>
               
-              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-10">
-                <div className="space-y-2">
-                  <p className="text-slate-400 flex items-center justify-center lg:justify-start gap-2 text-sm font-bold tracking-tight">
-                    <Mail className="w-4 h-4 text-violet-400" /> {session.user.email}
-                  </p>
-                  {userDoc?.phone && (
-                    <p className="text-slate-400 flex items-center justify-center lg:justify-start gap-2 text-sm font-bold tracking-tight">
-                      <Phone className="w-4 h-4 text-cyan-400" /> {userDoc.phone}
-                    </p>
-                  )}
-                </div>
-                <div className="flex flex-col gap-3 min-w-[240px]">
-                  <div className="flex justify-between text-[10px] font-black uppercase tracking-widest mb-1">
-                    <span className="text-slate-500">Profile Completion</span>
-                    <span className="text-violet-400">{profileCompletion}%</span>
-                  </div>
-                  <div className="progress-bar-container">
-                    <div 
-                      className="progress-bar" 
-                      style={{ width: `${profileCompletion}%` }}
-                    />
-                  </div>
-                </div>
-              </div>
+              <p className="text-slate-400 text-sm font-medium tracking-wide max-w-2xl mx-auto lg:mx-0">
+                Performance metrics and matching analytics for your analyzed profiles. 
+                Monitor your progress and optimize your impact through data-driven insights.
+              </p>
             </div>
             
             <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
-              <Link href="/#analyzer" className="btn-primary px-8 py-4 shadow-violet-500/20">
+              <Link href="/#analyzer" className="btn-primary px-8 py-4 shadow-violet-500/20 flex items-center justify-center gap-2">
                 <Zap className="w-5 h-5" /> New Analysis
               </Link>
-              <Link href="/profile" className="btn-secondary px-8 py-4">
-                View Profile
+              <Link href="/" className="btn-secondary px-8 py-4 flex items-center justify-center gap-2">
+                <ArrowUpRight className="w-5 h-5 rotate-[225deg]" /> Back to Tools
               </Link>
             </div>
           </div>

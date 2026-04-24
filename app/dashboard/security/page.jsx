@@ -1,10 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { Shield, Lock, Eye, EyeOff, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Shield, Lock, Eye, EyeOff, CheckCircle2, AlertCircle, LogOut, Monitor } from 'lucide-react';
+import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 
 export default function SecurityPage() {
+  const { data: session } = useSession();
   const [formData, setFormData] = useState({
     currentPassword: '',
     newPassword: '',
@@ -17,6 +19,8 @@ export default function SecurityPage() {
   });
   const [status, setStatus] = useState({ type: '', message: '' });
   const [isLoading, setIsLoading] = useState(false);
+  const [logoutAllLoading, setLogoutAllLoading] = useState(false);
+  const [logoutAllStatus, setLogoutAllStatus] = useState({ type: '', message: '' });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -46,10 +50,28 @@ export default function SecurityPage() {
       } else {
         setStatus({ type: 'error', message: data.error || 'Failed to update password' });
       }
-    } catch (error) {
+    } catch {
       setStatus({ type: 'error', message: 'An unexpected error occurred' });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleLogoutAll = async () => {
+    setLogoutAllLoading(true);
+    setLogoutAllStatus({ type: '', message: '' });
+    try {
+      const res = await fetch('/api/user/logout-all', { method: 'POST' });
+      if (res.ok) {
+        setLogoutAllStatus({ type: 'success', message: 'All sessions terminated. Signing you out...' });
+        setTimeout(() => signOut({ callbackUrl: '/login' }), 1500);
+      } else {
+        setLogoutAllStatus({ type: 'error', message: 'Failed to logout all sessions.' });
+      }
+    } catch {
+      setLogoutAllStatus({ type: 'error', message: 'An unexpected error occurred.' });
+    } finally {
+      setLogoutAllLoading(false);
     }
   };
 
@@ -58,123 +80,144 @@ export default function SecurityPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Security Settings</h1>
-        <p className="text-gray-500 dark:text-gray-400">Manage your password and account security</p>
+    <div className="max-w-4xl mx-auto py-8 animate-in fade-in slide-in-from-bottom-4 duration-1000 space-y-8">
+      <div className="mb-2">
+        <h1 className="text-4xl font-black text-white mb-2 tracking-tighter italic uppercase">Security</h1>
+        <p className="text-slate-500 font-bold uppercase text-[10px] tracking-widest">Manage your password and active sessions</p>
       </div>
 
-      <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-3xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden">
-        <div className="p-8 border-b border-gray-100 dark:border-gray-700/50 bg-gradient-to-r from-blue-50/50 to-purple-50/50 dark:from-blue-900/10 dark:to-purple-900/10">
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-2xl">
-              <Shield className="w-6 h-6" />
-            </div>
-            <div>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white">Change Password</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Ensure your account is using a long, random password to stay secure.</p>
-            </div>
+      {/* Change Password */}
+      <div className="glass-panel p-10 border-white/5 bg-white/[0.02]">
+        <div className="flex items-center gap-4 mb-10">
+          <div className="p-3.5 bg-violet-500/10 text-violet-400 rounded-2xl">
+            <Lock className="w-6 h-6" />
+          </div>
+          <div>
+            <h3 className="text-xl font-black text-white uppercase tracking-tighter italic">Update Password</h3>
+            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Secure your account with a strong password</p>
           </div>
         </div>
 
-        <div className="p-8">
-          <form onSubmit={handleSubmit} className="space-y-6 max-w-md">
-            {status.message && (
-              <div className={`p-4 rounded-2xl flex items-center gap-3 animate-in fade-in zoom-in duration-300 ${status.type === 'success' ? 'bg-green-50 text-green-700 border border-green-100' : 'bg-red-50 text-red-700 border border-red-100'
-                }`}>
-                {status.type === 'success' ? <CheckCircle2 className="w-5 h-5 shrink-0" /> : <AlertCircle className="w-5 h-5 shrink-0" />}
-                <p className="text-sm font-medium">{status.message}</p>
-              </div>
-            )}
+        <form onSubmit={handleSubmit} className="space-y-6 max-w-md">
+          {status.message && (
+            <div className={`p-4 rounded-2xl flex items-center gap-3 animate-in fade-in zoom-in duration-300 ${
+              status.type === 'success'
+                ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
+            }`}>
+              {status.type === 'success' ? <CheckCircle2 className="w-5 h-5 shrink-0" /> : <AlertCircle className="w-5 h-5 shrink-0" />}
+              <p className="text-[10px] font-black uppercase tracking-widest">{status.message}</p>
+            </div>
+          )}
 
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 ml-1">Current Password</label>
-              <div className="relative">
+          {['current', 'new', 'confirm'].map((field) => (
+            <div key={field} className="space-y-2">
+              <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
+                {field === 'current' ? 'Current Password' : field === 'new' ? 'New Password' : 'Confirm New Password'}
+              </label>
+              <div className="relative group">
                 <input
-                  type={showPasswords.current ? 'text' : 'password'}
+                  type={showPasswords[field] ? 'text' : 'password'}
                   required
-                  value={formData.currentPassword}
-                  onChange={(e) => setFormData({ ...formData, currentPassword: e.target.value })}
-                  className="w-full pl-12 pr-12 py-3.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent outline-none transition-all text-gray-900 dark:text-white"
+                  value={formData[`${field}Password`]}
+                  onChange={(e) => setFormData({ ...formData, [`${field}Password`]: e.target.value })}
+                  className="w-full pl-12 pr-12 py-4 bg-white/[0.02] border border-white/5 rounded-2xl focus:border-violet-500/50 outline-none transition-all text-white placeholder:text-slate-700"
                   placeholder="••••••••"
                 />
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-600 group-focus-within:text-violet-400 transition-colors" />
                 <button
                   type="button"
-                  onClick={() => toggleVisibility('current')}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+                  onClick={() => toggleVisibility(field)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-600 hover:text-slate-300 transition-colors"
                 >
-                  {showPasswords.current ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  {showPasswords[field] ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </div>
             </div>
+          ))}
 
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 ml-1">New Password</label>
-              <div className="relative">
-                <input
-                  type={showPasswords.new ? 'text' : 'password'}
-                  required
-                  value={formData.newPassword}
-                  onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
-                  className="w-full pl-12 pr-12 py-3.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent outline-none transition-all text-gray-900 dark:text-white"
-                  placeholder="Min. 6 characters"
-                />
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <button
-                  type="button"
-                  onClick={() => toggleVisibility('new')}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
-                >
-                  {showPasswords.new ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                </button>
-              </div>
-            </div>
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="btn-primary w-full py-4 shadow-violet-500/20"
+          >
+            {isLoading ? (
+              <span className="flex items-center justify-center gap-2">
+                <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                UPDATING...
+              </span>
+            ) : 'CONFIRM CHANGE'}
+          </button>
+        </form>
+      </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 ml-1">Confirm New Password</label>
-              <div className="relative">
-                <input
-                  type={showPasswords.confirm ? 'text' : 'password'}
-                  required
-                  value={formData.confirmPassword}
-                  onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                  className="w-full pl-12 pr-12 py-3.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent outline-none transition-all text-gray-900 dark:text-white"
-                  placeholder="Confirm new password"
-                />
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <button
-                  type="button"
-                  onClick={() => toggleVisibility('confirm')}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
-                >
-                  {showPasswords.confirm ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                </button>
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-2xl font-bold shadow-lg shadow-blue-600/20 transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-70 disabled:hover:translate-y-0"
-            >
-              {isLoading ? (
-                <span className="flex items-center justify-center gap-2">
-                  <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Updating...
-                </span>
-              ) : 'Update Password'}
-            </button>
-          </form>
+      {/* Browser Sessions */}
+      <div className="glass-panel p-10 border-white/5 bg-white/[0.02]">
+        <div className="flex items-center gap-4 mb-10">
+          <div className="p-3.5 bg-cyan-500/10 text-cyan-400 rounded-2xl">
+            <Shield className="w-6 h-6" />
+          </div>
+          <div>
+            <h3 className="text-xl font-black text-white uppercase tracking-tighter italic">Browser Sessions</h3>
+            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Manage and terminate active sessions</p>
+          </div>
         </div>
 
-        <div className="px-8 py-6 bg-gray-50/50 dark:bg-gray-900/50 border-t border-gray-100 dark:border-gray-700/50">
-          <Link href="/dashboard" className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline">
-            Back to Dashboard
-          </Link>
+        <div className="space-y-4">
+          {/* Current session card */}
+          <div className="flex items-center justify-between p-5 rounded-2xl bg-white/[0.02] border border-white/5">
+            <div className="flex items-center gap-5">
+              <div className="p-3 bg-emerald-500/10 text-emerald-400 rounded-xl">
+                <Monitor className="w-5 h-5" />
+              </div>
+              <div>
+                <p className="font-bold text-white tracking-tight">Current Device</p>
+                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">
+                  {session?.user?.email || 'Active session'}
+                </p>
+              </div>
+            </div>
+            <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="text-[9px] font-black text-emerald-400 uppercase tracking-widest">Active</span>
+            </span>
+          </div>
+
+          {/* Logout all status */}
+          {logoutAllStatus.message && (
+            <div className={`p-4 rounded-2xl flex items-center gap-3 animate-in fade-in zoom-in duration-300 ${
+              logoutAllStatus.type === 'success'
+                ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
+            }`}>
+              {logoutAllStatus.type === 'success'
+                ? <CheckCircle2 className="w-5 h-5 shrink-0" />
+                : <AlertCircle className="w-5 h-5 shrink-0" />}
+              <p className="text-[10px] font-black uppercase tracking-widest">{logoutAllStatus.message}</p>
+            </div>
+          )}
+
+          {/* Logout All button */}
+          <button
+            onClick={handleLogoutAll}
+            disabled={logoutAllLoading}
+            className="w-full flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-rose-500/5 hover:bg-rose-500/10 border border-rose-500/10 hover:border-rose-500/30 text-rose-400 transition-all duration-300 group disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            {logoutAllLoading ? (
+              <>
+                <div className="w-4 h-4 border-2 border-rose-400/30 border-t-rose-400 rounded-full animate-spin" />
+                <span className="text-[10px] font-black uppercase tracking-widest">Terminating Sessions...</span>
+              </>
+            ) : (
+              <>
+                <LogOut className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                <span className="text-[10px] font-black uppercase tracking-widest">Logout All Devices</span>
+              </>
+            )}
+          </button>
+          <p className="text-[9px] text-slate-600 text-center font-bold uppercase tracking-widest">
+            This will immediately sign out all active sessions including this one.
+          </p>
         </div>
       </div>
     </div>

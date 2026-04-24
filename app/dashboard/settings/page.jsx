@@ -3,9 +3,11 @@
 import { useState } from 'react';
 import { 
   Settings, User, Bell, Shield, Lock, Eye, EyeOff, 
-  CheckCircle2, AlertCircle, Trash2, Globe, Key, Zap
+  CheckCircle2, AlertCircle, Trash2, Key, Zap
 } from 'lucide-react';
-import { useSession } from 'next-auth/react';
+
+import { useSession, signOut } from 'next-auth/react';
+
 
 export default function SettingsPage() {
   const { data: session } = useSession();
@@ -22,6 +24,32 @@ export default function SettingsPage() {
   });
   const [status, setStatus] = useState({ type: '', message: '' });
   const [isLoading, setIsLoading] = useState(false);
+  const [showTerminateModal, setShowTerminateModal] = useState(false);
+  const [terminateInput, setTerminateInput] = useState('');
+  const [terminateLoading, setTerminateLoading] = useState(false);
+  const [terminateError, setTerminateError] = useState('');
+
+  const handleTerminateAccount = async () => {
+    if (terminateInput !== 'DELETE') {
+      setTerminateError('Please type DELETE to confirm.');
+      return;
+    }
+    setTerminateLoading(true);
+    setTerminateError('');
+    try {
+      const res = await fetch('/api/user/account', { method: 'DELETE' });
+      if (res.ok) {
+        await signOut({ callbackUrl: '/login' });
+      } else {
+        const data = await res.json();
+        setTerminateError(data.error || 'Failed to terminate account.');
+      }
+    } catch {
+      setTerminateError('An unexpected error occurred.');
+    } finally {
+      setTerminateLoading(false);
+    }
+  };
 
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
@@ -169,11 +197,91 @@ export default function SettingsPage() {
                 </div>
               </div>
 
-              <button className="px-8 py-3.5 bg-rose-600 hover:bg-rose-700 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-lg shadow-rose-600/20 transition-all">
+              <button
+                onClick={() => { setShowTerminateModal(true); setTerminateInput(''); setTerminateError(''); }}
+                className="px-8 py-3.5 bg-rose-600 hover:bg-rose-700 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-lg shadow-rose-600/20 transition-all flex items-center gap-2"
+              >
+                <Trash2 className="w-4 h-4" />
                 Terminate Account
               </button>
             </div>
           </>
+        )}
+
+        {/* Terminate Account Confirmation Modal */}
+        {showTerminateModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={() => setShowTerminateModal(false)}>
+            <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
+            <div
+              className="relative w-full max-w-md bg-gray-950 border border-rose-500/20 rounded-3xl p-8 shadow-2xl shadow-rose-500/10 animate-in fade-in zoom-in-95 duration-300"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Modal Header */}
+              <div className="flex items-center gap-4 mb-6">
+                <div className="p-3 bg-rose-500/10 rounded-2xl">
+                  <Trash2 className="w-6 h-6 text-rose-500" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-black text-white uppercase tracking-tight italic">Terminate Account</h3>
+                  <p className="text-[9px] font-bold text-rose-500/70 uppercase tracking-widest">This action is permanent and irreversible</p>
+                </div>
+              </div>
+
+              {/* Warning */}
+              <div className="p-4 rounded-2xl bg-rose-500/5 border border-rose-500/10 mb-6 space-y-2">
+                <p className="text-[10px] font-black text-rose-400 uppercase tracking-widest">The following will be permanently deleted:</p>
+                <ul className="space-y-1">
+                  {['Your account and profile', 'All analysis results', 'All match history'].map((item, i) => (
+                    <li key={i} className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                      <span className="w-1 h-1 rounded-full bg-rose-500" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Confirmation Input */}
+              <div className="space-y-2 mb-6">
+                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+                  Type <span className="text-rose-400">DELETE</span> to confirm
+                </label>
+                <input
+                  type="text"
+                  value={terminateInput}
+                  onChange={(e) => { setTerminateInput(e.target.value); setTerminateError(''); }}
+                  placeholder="DELETE"
+                  className="w-full px-4 py-3 bg-white/[0.02] border border-white/10 focus:border-rose-500/50 rounded-2xl outline-none text-white placeholder:text-slate-700 font-mono tracking-widest transition-all"
+                />
+                {terminateError && (
+                  <p className="text-[9px] font-black text-rose-400 uppercase tracking-widest flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3" /> {terminateError}
+                  </p>
+                )}
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowTerminateModal(false)}
+                  className="flex-1 py-3 rounded-2xl border border-white/10 text-slate-400 hover:text-white hover:border-white/20 text-[10px] font-black uppercase tracking-widest transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleTerminateAccount}
+                  disabled={terminateLoading || terminateInput !== 'DELETE'}
+                  className="flex-1 py-3 rounded-2xl bg-rose-600 hover:bg-rose-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2"
+                >
+                  {terminateLoading ? (
+                    <>
+                      <div className="w-3.5 h-3.5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                      Deleting...
+                    </>
+                  ) : 'Confirm Delete'}
+                </button>
+              </div>
+            </div>
+          </div>
         )}
 
         {activeTab === 'password' && (
@@ -255,18 +363,6 @@ export default function SettingsPage() {
             </div>
 
             <div className="space-y-6">
-              <div className="flex items-center justify-between p-6 rounded-2xl bg-white/[0.01] border border-white/5 group">
-                <div className="flex items-center gap-5">
-                  <div className="p-3 bg-violet-500/5 text-violet-400 rounded-xl">
-                    <Globe className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <p className="font-bold text-white tracking-tight">Two-Factor Authentication</p>
-                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">Recommended for maximum account safety</p>
-                  </div>
-                </div>
-                <button className="px-5 py-2 bg-white/5 hover:bg-white/10 text-[10px] font-black uppercase tracking-widest rounded-xl text-slate-300 transition-all">Enable</button>
-              </div>
 
               <div className="flex items-center justify-between p-6 rounded-2xl bg-white/[0.01] border border-white/5 group">
                 <div className="flex items-center gap-5">

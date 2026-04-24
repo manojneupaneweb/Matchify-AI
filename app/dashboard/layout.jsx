@@ -1,15 +1,41 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+
+
 
 export default function DashboardLayout({ children }) {
   const { data: session } = useSession();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // Auto sign-out if token has been invalidated by "Logout All"
+  useEffect(() => {
+    if (session?.error === 'TokenInvalidated') {
+      signOut({ callbackUrl: '/login' });
+    }
+  }, [session]);
+
+
+  const formatLastLogin = (dateStr) => {
+    if (!dateStr) return 'First login';
+    const diff = Math.floor((new Date() - new Date(dateStr)) / 60000); // minutes
+    if (diff < 1) return 'Just now';
+    if (diff < 60) return `${diff}m ago`;
+    const hours = Math.floor(diff / 60);
+    if (hours <= 12) return `${hours}hr ago`;
+    return new Date(dateStr).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' });
+  };
 
   const handleLogout = (e) => {
     if (e) e.preventDefault();
@@ -20,6 +46,7 @@ export default function DashboardLayout({ children }) {
     { 
       href: '/dashboard', 
       label: 'Dashboard', 
+      exact: true,
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
@@ -30,6 +57,7 @@ export default function DashboardLayout({ children }) {
     { 
       href: '/dashboard/analyses', 
       label: 'Analyses', 
+      exact: false,
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
@@ -38,8 +66,20 @@ export default function DashboardLayout({ children }) {
       badge: null
     },
     { 
+      href: '/dashboard/security', 
+      label: 'Security', 
+      exact: false,
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+        </svg>
+      ),
+      badge: null
+    },
+    { 
       href: '/dashboard/settings', 
       label: 'Settings', 
+      exact: false,
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
@@ -47,7 +87,19 @@ export default function DashboardLayout({ children }) {
         </svg>
       ),
       badge: null
-    }
+    },
+    // Admin-only item
+    ...(session?.user?.role === 'admin' ? [{
+      href: '/dashboard/users',
+      label: 'Users',
+      exact: false,
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path>
+        </svg>
+      ),
+      badge: 'ADMIN'
+    }] : []),
   ];
 
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
@@ -116,7 +168,8 @@ export default function DashboardLayout({ children }) {
         {/* Navigation */}
         <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
           {navItems.map((item) => {
-            const isActive = pathname === item.href;
+            const isActive = item.exact ? pathname === item.href : pathname.startsWith(item.href);
+
             return (
               <Link
                 key={item.href}
@@ -180,7 +233,7 @@ export default function DashboardLayout({ children }) {
       {/* Main Content */}
       <main className="flex-1 flex flex-col overflow-hidden relative z-10">
         {/* Top Navigation Bar */}
-        <header className="bg-white/[0.02] backdrop-blur-2xl border-b border-white/5">
+        <header className="relative z-30 bg-white/[0.02] backdrop-blur-2xl border-b border-white/5">
           <div className="flex items-center justify-between px-4 md:px-8 py-4">
             {/* Left Section */}
             <div className="flex items-center gap-6">
@@ -208,15 +261,29 @@ export default function DashboardLayout({ children }) {
             </div>
 
             {/* Right Section */}
-            <div className="flex items-center gap-4">
-              <button className="relative p-2.5 rounded-xl hover:bg-white/5 transition-all duration-300 text-slate-400 hover:text-white">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
-                </svg>
-                <span className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-violet-500 shadow-[0_0_10px_rgba(139,92,246,0.6)]"></span>
-              </button>
+            <div className="flex items-center gap-6">
+              {/* Live Time & Status */}
+              <div className="hidden lg:flex items-center gap-6 text-right">
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">Last Login</span>
+                  <span className="text-xs font-bold text-violet-400 leading-none">{formatLastLogin(session?.user?.lastLoginAt)}</span>
+                </div>
+                <div className="h-8 w-px bg-white/5"></div>
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">Local Time</span>
+                  <span className="text-xs font-bold text-white leading-none">
+                    {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                  </span>
+                </div>
+              </div>
 
               <div className="h-6 w-px bg-white/10 mx-1 hidden md:block"></div>
+
+              {/* Greeting */}
+              <div className="hidden sm:block">
+                <span className="text-sm font-bold text-slate-400">Hi, </span>
+                <span className="text-sm font-black text-white">{session?.user?.name?.split(' ')[0] || 'User'}</span>
+              </div>
 
               {/* Profile Dropdown */}
               <div className="relative">
@@ -229,10 +296,7 @@ export default function DashboardLayout({ children }) {
                     alt="Profile"
                     className="w-9 h-9 rounded-xl object-cover border border-white/10 group-hover:border-violet-500/50 transition-colors"
                   />
-                  <div className="hidden md:block text-left">
-                    <p className="text-xs font-black text-white uppercase tracking-wider">{session?.user?.name?.split(' ')[0] || 'User'}</p>
-                    <p className="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em]">PRO</p>
-                  </div>
+                 
                   <svg className={`w-4 h-4 text-slate-500 transition-transform duration-300 ${profileDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
                   </svg>
@@ -285,7 +349,8 @@ export default function DashboardLayout({ children }) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
               </svg>
               <span className="text-slate-300">
-                {navItems.find(item => pathname.startsWith(item.href))?.label || 'OVERVIEW'}
+                {navItems.find(item => item.exact ? pathname === item.href : pathname.startsWith(item.href))?.label || 'OVERVIEW'}
+
               </span>
             </div>
           </div>

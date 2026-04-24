@@ -30,7 +30,17 @@ const UserSchema = new mongoose.Schema({
   profilePic: {
     type: String,
     default: '',
+  },
+  lastLoginAt: {
+    type: Date,
+    default: null,
+  },
+  tokenVersion: {
+    type: Number,
+    default: 0,
   }
 }, { timestamps: true });
+
+
 
 export default mongoose.models.User || mongoose.model('User', UserSchema);
