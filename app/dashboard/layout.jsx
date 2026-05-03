@@ -22,6 +22,7 @@ export default function DashboardLayout({ children }) {
   // Auto sign-out if token has been invalidated by "Logout All"
   useEffect(() => {
     if (session?.error === 'TokenInvalidated') {
+      console.log('Session invalidated, signing out...');
       signOut({ callbackUrl: '/login' });
     }
   }, [session]);

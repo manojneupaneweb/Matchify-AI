@@ -1,6 +1,8 @@
 import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/lib/authOptions';
 import { redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
+import { decrypt } from '@/lib/auth';
 import dbConnect from '@/lib/mongodb';
 import Result from '@/models/Result';
 import Stats from '@/models/Stats';
@@ -16,7 +18,23 @@ import {
 
 
 export default async function DashboardPage() {
-  const session = await getServerSession(authOptions);
+  const cookieStore = await cookies();
+  console.log('Dashboard Page Cookies:', cookieStore.getAll().map(c => c.name));
+  
+  let session = await getServerSession(authOptions);
+  console.log('Dashboard Page Session:', !!session);
+  
+  // Support custom session cookie if NextAuth session is missing
+  if (!session) {
+    const cookieStore = await cookies();
+    const customSession = cookieStore.get('session');
+    if (customSession) {
+      const payload = await decrypt(customSession.value);
+      if (payload) {
+        session = { user: payload };
+      }
+    }
+  }
   
   if (!session) {
     redirect('/login');

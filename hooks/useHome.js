@@ -127,9 +127,9 @@ export function useHome() {
       setResults(data);
       fetchStats();
 
-      // Redirect directly to the main dashboard to see updated stats
+      // Redirect directly to the specific result page
       if (data.resultId) {
-        router.push('/dashboard');
+        router.push(`/dashboard/results/${data.resultId}`);
       }
     } catch (err) {
       if (progressTimerRef.current) clearInterval(progressTimerRef.current);

@@ -1,13 +1,27 @@
 import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/lib/authOptions';
 import { redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
+import { decrypt } from '@/lib/auth';
 import dbConnect from '@/lib/mongodb';
 import Result from '@/models/Result';
 import Link from 'next/link';
 import { FileText, Calendar, Target, ArrowRight, Search, Filter } from 'lucide-react';
 
 export default async function AnalysesHistoryPage({ searchParams }) {
-  const session = await getServerSession(authOptions);
+  let session = await getServerSession(authOptions);
+  
+  // Support custom session cookie if NextAuth session is missing
+  if (!session) {
+    const cookieStore = await cookies();
+    const customSession = cookieStore.get('session');
+    if (customSession) {
+      const payload = await decrypt(customSession.value);
+      if (payload) {
+        session = { user: payload };
+      }
+    }
+  }
   
   if (!session) {
     redirect('/login');

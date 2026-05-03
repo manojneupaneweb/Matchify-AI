@@ -1,13 +1,31 @@
 import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/lib/authOptions';
 import { redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
+import { decrypt } from '@/lib/auth';
 import Link from 'next/link';
 import dbConnect from '@/lib/mongodb';
 import Result from '@/models/Result';
 import ResultsDisplay from '@/components/sections/ResultsDisplay';
 
 export default async function ResultDetailsPage({ params }) {
-  const session = await getServerSession(authOptions);
+  const cookieStore = await cookies();
+  console.log('Result Details Cookies:', cookieStore.getAll().map(c => c.name));
+
+  let session = await getServerSession(authOptions);
+  console.log('Result Details Session:', !!session);
+  
+  // Support custom session cookie if NextAuth session is missing
+  if (!session) {
+    const cookieStore = await cookies();
+    const customSession = cookieStore.get('session');
+    if (customSession) {
+      const payload = await decrypt(customSession.value);
+      if (payload) {
+        session = { user: payload };
+      }
+    }
+  }
   
   if (!session) {
     redirect('/login');
