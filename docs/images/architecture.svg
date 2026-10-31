@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="160" viewBox="0 0 980 160">
+  <style>
+    text { font-family: ui-sans-serif, system-ui, sans-serif; font-size: 13px; fill: #e2e8f0; }
+    .box { fill: #111827; stroke: #6d28d9; stroke-width: 1.5; }
+  </style>
+  <rect width="980" height="160" fill="#0b0b0f"/>
+  <g>
+    <rect class="box" x="16" y="48" width="110" height="56" rx="8"/>
+    <text x="71" y="80" text-anchor="middle">Resume PDF</text>
+    <rect class="box" x="156" y="48" width="90" height="56" rx="8"/>
+    <text x="201" y="80" text-anchor="middle">Parse</text>
+    <rect class="box" x="276" y="48" width="100" height="56" rx="8"/>
+    <text x="326" y="80" text-anchor="middle">Extract</text>
+    <rect class="box" x="406" y="48" width="90" height="56" rx="8"/>
+    <text x="451" y="80" text-anchor="middle">Match</text>
+    <rect class="box" x="526" y="48" width="120" height="56" rx="8"/>
+    <text x="586" y="80" text-anchor="middle">Score in code</text>
+    <rect class="box" x="676" y="48" width="110" height="56" rx="8"/>
+    <text x="731" y="80" text-anchor="middle">Suggestions</text>
+    <rect class="box" x="816" y="48" width="140" height="56" rx="8"/>
+    <text x="886" y="80" text-anchor="middle">MongoDB</text>
+  </g>
+  <g stroke="#a78bfa" stroke-width="1.5" fill="none">
+    <path d="M126 76 H156"/>
+    <path d="M246 76 H276"/>
+    <path d="M376 76 H406"/>
+    <path d="M496 76 H526"/>
+    <path d="M646 76 H676"/>
+    <path d="M786 76 H816"/>
+  </g>
+  <text x="490" y="28" text-anchor="middle" fill="#94a3b8">Job description joins at Extract</text>
+</svg>

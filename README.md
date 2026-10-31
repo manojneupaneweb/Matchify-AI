@@ -4,7 +4,9 @@
 
 I built this to see how well a resume lines up with one job description. You upload a PDF, paste the JD, and get a score, the skills that matched, the ones that did not, and a few rewrite ideas. Reports are saved to your account.
 
-Screenshot goes here once I take one: `docs/images/demo.gif`
+![Home page](docs/images/home.png)
+
+![Pipeline](docs/images/architecture.svg)
 
 ## The problem
 
