@@ -33,7 +33,7 @@ function isAdmin(person: { email: string; role: string }) {
   return Boolean(allow && person.email.toLowerCase() === allow.toLowerCase());
 }
 
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const path = req.nextUrl.pathname;
   const person = await identity(req);
   const wantsAdmin = path.startsWith('/admin') || path.startsWith('/api/admin');
