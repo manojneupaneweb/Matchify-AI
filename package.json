@@ -14,7 +14,7 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
-    "eval": "tsx evals/run.ts",
+    "eval": "tsx scripts/eval.ts",
     "prepare": "husky"
   },
   "lint-staged": {

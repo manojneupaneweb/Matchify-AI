@@ -88,7 +88,7 @@ npm run eval
 
 `npm test` never calls Gemini. It uses a fake `fetch`. Coverage has to stay at 80% lines on `lib/` (`authOptions.ts` is excluded).
 
-`npm run eval` uses the real API, so it is not in CI. I have not pasted results yet. The cases in `evals/cases/` are made up.
+`npm run eval` uses the real API, so it is not in CI. I have not pasted results yet. The cases in `eval-data/` are made up.
 
 Playwright sets an `e2e_user` cookie when `E2E_AUTH_BYPASS=1` and stubs `/api/analyze`. The dev server still wants `MONGODB_URI`.
 
@@ -107,4 +107,4 @@ Playwright sets an `e2e_user` cookie when `E2E_AUTH_BYPASS=1` and stubs `/api/an
 
 ## Layout
 
-`app/` pages and routes, `components/` UI, `lib/ai/` Gemini and prompts, `lib/scoring.ts` the score, `lib/services/` save and session, `tests/`, `e2e/`, `evals/`.
+`app/` pages and routes, `components/` UI, `lib/ai/` Gemini and prompts, `lib/scoring.ts` the score, `lib/services/` save and session, `tests/`, `e2e/`, `eval-data/`, `scripts/eval.ts`.
