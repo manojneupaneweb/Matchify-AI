@@ -1,7 +1,3 @@
-/**
- * Manual evaluation. Uses the real Gemini API. Not part of CI.
- * Usage: npm run eval
- */
 import { readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import { runAnalysisPipeline } from '../lib/ai/pipeline';
