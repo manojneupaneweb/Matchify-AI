@@ -24,7 +24,7 @@ describe('pdf validation', () => {
 
   it('accepts a small pdf header and rejects empty extracted text', () => {
     expect(() => assertPdf(Buffer.from('%PDF-1.4'))).not.toThrow();
-    expect(() => assertResumeText('   ')).toThrow(/readable text/);
+    expect(() => assertResumeText('   ')).toThrow(/scanned image/);
   });
 });
 
