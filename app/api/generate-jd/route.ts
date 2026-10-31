@@ -1,4 +1,5 @@
 // @ts-nocheck
+// TODO: still a single Gemini call. The analyze route is the one with the real pipeline.
 import { NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
