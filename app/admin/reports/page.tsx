@@ -177,8 +177,8 @@ export default function AdminReportsPage() {
   );
 }
 
-function WoWCard({ label, current, previous, diff, unit, icon: Icon }: { label: string; current: string | number; previous: string | number; diff: string | null; unit: string; icon: ComponentType<{ className?: string }>; positive?: boolean }) {
-  const isUp = parseFloat(diff) >= 0;
+function WoWCard({ label, current, previous, diff, unit, icon: Icon }: { label: string; current: string | number | undefined; previous: string | number | undefined; diff: string | null; unit: string; icon: ComponentType<{ className?: string }>; positive?: boolean }) {
+  const isUp = parseFloat(diff || '0') >= 0;
   return (
     <div className="glass-panel bg-white/[0.02] border-white/5 p-5">
       <div className="flex items-start justify-between mb-4">
@@ -188,7 +188,7 @@ function WoWCard({ label, current, previous, diff, unit, icon: Icon }: { label: 
         {diff !== null && (
           <div className={`flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-black ${isUp ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400' : 'bg-rose-500/10 border border-rose-500/20 text-rose-400'}`}>
             {isUp ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
-            {Math.abs(diff)}{unit === '%' ? 'pts' : '%'} vs last wk
+            {Math.abs(Number(diff))}{unit === '%' ? 'pts' : '%'} vs last wk
           </div>
         )}
       </div>
