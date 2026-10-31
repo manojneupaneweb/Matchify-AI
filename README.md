@@ -21,38 +21,42 @@ Job seekers often cannot tell if a resume fits a posting, which keywords an ATS 
 - History at `/dashboard/analyses`, 10 reports per page.
 - Google, GitHub, and email/password login.
 - Admin pages if your user `role` is `admin`, or if your email matches `ADMIN_EMAIL`.
-- A job-description expander and a cover-letter draft on the home page. Those two are still a single Gemini call.
+- A job-description expander and a cover-letter draft. Those two are one Gemini call each, with the same Zod check and model fallback as the analyzer.
 - Delete saved analyses, or delete the whole account.
 
 ## Architecture
 
 ```mermaid
 flowchart LR
-  resume[Resume PDF] --> parse[Parse]
-  jd[Job description] --> extract[Extract]
-  parse --> extract
-  extract --> match[Match]
-  match --> score[Score in code]
-  score --> suggest[Suggestions]
-  suggest --> store[MongoDB]
+  resume[Resume PDF] --> agent[Agent]
+  jd[Job description] --> agent
+  agent --> tools[extract_keywords and rewrite_bullet]
+  tools --> agent
+  agent --> score[Score in code]
+  score --> critique[Critique]
+  critique --> store[MongoDB]
   store --> dash[Dashboard]
 ```
+
+The agent lives in `lib/agent/`. It can call `extract_keywords` and `rewrite_bullet`. Those tools run in our code. The model chooses when to call them. After the skills are out, `lib/scoring.ts` computes the number. A critique step can run a second time if it marks its own review as not ok. Bad JSON is sent back up to twice.
+
+If the same resume text and job description were analyzed in the last hour on this process, the model is skipped and the cached draft is reused. The comparison with your previous score still happens after that.
 
 More detail in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ## Design decisions
 
-I split the old one-shot prompt into steps because one JSON blob was inventing the score and sometimes returning markdown. Each step has a prompt file in `lib/ai/prompts/` and a Zod schema. If the JSON is bad I send the validation error back, twice, then fail.
+I did not let the model pick the score. One JSON blob used to invent it. The weights are 50% must-have, 20% nice-to-have, 20% keywords, 10% experience. Tests cover an empty resume, a full match, a miss, duplicates, and a few synonyms (`JS` / `JavaScript`).
 
-The score function is boring on purpose. Same skills in, same number out. Tests cover an empty resume, a full match, a miss, duplicates, and a few synonyms (`JS` / `JavaScript`).
+Function calling is only for the two tools. I did not give the model a tool that returns a score, because it would just make up a number again.
 
-Resume and JD text are untrusted. I wrap them in `BEGIN UNTRUSTED` / `END UNTRUSTED` and tell the model to ignore instructions inside. If the text itself contains those markers I break them up so it cannot close the block early.
+Resume and JD text are untrusted. I wrap them in `BEGIN UNTRUSTED` / `END UNTRUSTED` and tell the model to ignore instructions inside. If the text contains those markers I break them up so it cannot close the block early.
 
-On 429 or 5xx I back off and then try `GEMINI_MODEL_FALLBACK`. Timeouts abort the call. The client only sees `{ error: { code, message } }`.
+Primary model is `gemini-2.5-flash`. On timeout, 429, or 5xx I try `gemini-2.0-flash`. The cache is in memory, so a second server process will call Gemini again. The client only sees `{ error: { code, message } }`.
 
 ## Stack
 
-Next.js 16, React 19, TypeScript, Tailwind 4, MongoDB, NextAuth, Gemini (`gemini-2.0-flash`, fallback `gemini-2.5-flash`), Zod, Vitest, Playwright.
+Next.js 16, React 19, TypeScript, Tailwind 4, MongoDB, NextAuth, Gemini (`gemini-2.5-flash`, then `gemini-2.0-flash`), Zod, Vitest, Playwright.
 
 ## Getting started
 
@@ -95,10 +99,11 @@ Playwright sets an `e2e_user` cookie when `E2E_AUTH_BYPASS=1` and stubs `/api/an
 ## Known limitations
 
 - No OCR. A scanned PDF comes back as "could not read this".
-- PDF only. The old "DOCX" label was wrong, so I removed it.
+- PDF only, at most 5 MB and 10 pages. The old "DOCX" label was wrong, so I removed it.
 - "Senior" just means the extracted years are at least 5. That is a guess.
 - The synonym list is short. Most tools are matched by the exact normalized name.
-- Cover letters and generated JDs are not on this pipeline.
+- Cover letters and generated JDs do not run the critique loop or the score.
+- The analysis cache dies when the process restarts. It is not shared across servers.
 - Rate limit is per server process unless Upstash is set.
 - A lot of the older pages still have `// @ts-nocheck`. `noImplicitAny` is off so those files compile. New code in `lib/` is stricter.
 - The analysis holds the HTTP connection open. `maxDuration` is 60 seconds. There is no job queue.
@@ -107,4 +112,4 @@ Playwright sets an `e2e_user` cookie when `E2E_AUTH_BYPASS=1` and stubs `/api/an
 
 ## Layout
 
-`app/` pages and routes, `components/` UI, `lib/ai/` Gemini and prompts, `lib/scoring.ts` the score, `lib/services/` save and session, `tests/`, `e2e/`, `eval-data/`, `scripts/eval.ts`.
+`app/` pages and routes, `components/` UI, `lib/agent/` the tool loop, `lib/scoring.ts` the score, `lib/services/` save, session, and the shorter Gemini writes, `tests/`, `e2e/`, `eval-data/`, `scripts/eval.ts`.
