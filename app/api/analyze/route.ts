@@ -5,6 +5,7 @@ import { logger } from '@/lib/logger';
 import { requireUser } from '@/lib/services/session';
 import { latestScore, saveAnalysis } from '@/lib/services/analysis';
 import { runAgent } from '@/lib/agent/run';
+import { analysisKey, readAnalysisCache, withPrevious, writeAnalysisCache } from '@/lib/agent/cache';
 import { assertPdf, assertResumeText } from '@/lib/validation/pdf';
 import { jobDescriptionSchema } from '@/lib/validation/schemas';
 import { enforceAnalyzeRateLimit } from '@/lib/rate-limit';
@@ -45,12 +46,23 @@ export async function POST(req: Request) {
         };
         try {
           const previousScore = await latestScore(user.email);
-          const draft = await runAgent({
-            resumeText,
-            jobDescription: jd,
-            previousScore,
-            onProgress: (step) => send('progress', { step }),
-          });
+          const key = analysisKey(resumeText, jd);
+          const cached = readAnalysisCache(key);
+          let base = cached;
+          if (base) {
+            logger.info('analysis cache hit', { key: key.slice(0, 12) });
+            for (const step of ['Parsing', 'Extracting', 'Matching', 'Scoring', 'Suggesting']) {
+              send('progress', { step });
+            }
+          } else {
+            base = await runAgent({
+              resumeText,
+              jobDescription: jd,
+              onProgress: (step) => send('progress', { step }),
+            });
+            writeAnalysisCache(key, base);
+          }
+          const draft = withPrevious(base, previousScore);
           const saved = await saveAnalysis({
             userEmail: user.email,
             resumeName: file.name || 'Resume.pdf',

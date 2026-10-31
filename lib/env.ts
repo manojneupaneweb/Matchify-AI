@@ -2,8 +2,8 @@ import { z } from 'zod';
 
 const schema = z.object({
   GEMINI_API_KEY: z.string().min(1),
-  GEMINI_MODEL_PRIMARY: z.string().min(1).default('gemini-2.0-flash'),
-  GEMINI_MODEL_FALLBACK: z.string().min(1).default('gemini-2.5-flash'),
+  GEMINI_MODEL_PRIMARY: z.string().min(1).default('gemini-2.5-flash'),
+  GEMINI_MODEL_FALLBACK: z.string().min(1).default('gemini-2.0-flash'),
   MONGODB_URI: z.string().min(1),
   NEXTAUTH_URL: z.string().min(1).default('http://localhost:3000'),
   NEXTAUTH_SECRET: z.string().min(1),

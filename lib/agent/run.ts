@@ -46,7 +46,6 @@ function blankUsage(): TokenUsage {
 export async function runAgent(input: {
   resumeText: string;
   jobDescription: string;
-  previousScore?: number | null;
   onProgress?: (step: string) => void;
   fetchImpl?: typeof fetch;
 }): Promise<AnalysisDraft & { previousScore: number | null; scoreDelta: number | null; critiqueIssues: string[] }> {
@@ -152,20 +151,15 @@ Return JSON: suggestions, rewrites [{before, after, reason}], summary.`,
     experienceAligned: aligned,
   });
 
-  const previousScore = input.previousScore ?? null;
-  const scoreDelta = previousScore == null ? null : scored.score - previousScore;
-  logger.info('agent finished', { score: scored.score, scoreDelta, tools: [...profile.toolCalls, ...job.toolCalls, ...rewrite.toolCalls] });
-
-  const memoryNote = scoreDelta == null
-    ? ''
-    : scoreDelta === 0
-      ? ' Same score as your last run.'
-      : ` ${scoreDelta > 0 ? 'Up' : 'Down'} ${Math.abs(scoreDelta)} points from your last run.`;
+  logger.info('agent finished', {
+    score: scored.score,
+    tools: [...profile.toolCalls, ...job.toolCalls, ...rewrite.toolCalls],
+  });
 
   return {
     score: scored.score,
     improvedScore: improved.score,
-    funnyMessage: `${critique.data.funnyMessage || ''}${memoryNote}`.trim(),
+    funnyMessage: (critique.data.funnyMessage || '').trim(),
     strengths: critique.data.strengths || [],
     weaknesses: critique.data.weaknesses || [],
     suggestions: rewrite.data.suggestions || [],
@@ -204,8 +198,8 @@ Return JSON: suggestions, rewrites [{before, after, reason}], summary.`,
       education: profile.data.education || [],
       summary: profile.data.summary || '',
     },
-    previousScore,
-    scoreDelta,
+    previousScore: null,
+    scoreDelta: null,
     critiqueIssues: critique.data.issues || [],
   };
 }
