@@ -30,7 +30,7 @@ export default function DashboardLayout({ children }) {
 
   const formatLastLogin = (dateStr) => {
     if (!dateStr) return 'First login';
-    const diff = Math.floor((Date.now() - new Date(dateStr).getTime()) / 60000);
+    const diff = Math.floor((new Date().getTime() - new Date(dateStr).getTime()) / 60000);
     if (diff < 1) return 'Just now';
     if (diff < 60) return `${diff}m ago`;
     const hours = Math.floor(diff / 60);

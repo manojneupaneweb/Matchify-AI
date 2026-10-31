@@ -101,7 +101,7 @@ export default async function DashboardPage() {
   
   // 7. Analysis Velocity (Scans per day)
   const daysSinceFirstScan = totalUserAnalyses > 0 
-    ? Math.max(1, Math.ceil((Date.now() - new Date(allUserResults[0].createdAt).getTime()) / (1000 * 60 * 60 * 24)))
+    ? Math.max(1, Math.ceil((new Date().getTime() - new Date(allUserResults[0].createdAt).getTime()) / (1000 * 60 * 60 * 24)))
     : 1;
   const scanVelocity = (totalUserAnalyses / daysSinceFirstScan).toFixed(2);
 
