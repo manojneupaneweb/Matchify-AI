@@ -17,6 +17,8 @@ export async function saveAnalysis(input: {
     resumeName: input.resumeName,
     jobDescription: input.jobDescription.slice(0, 20_000),
     score: input.draft.score,
+    previousScore: 'previousScore' in input.draft ? (input.draft as { previousScore?: number | null }).previousScore : null,
+    scoreDelta: 'scoreDelta' in input.draft ? (input.draft as { scoreDelta?: number | null }).scoreDelta : null,
     improvedScore: input.draft.improvedScore,
     funnyMessage: input.draft.funnyMessage,
     strengths: input.draft.strengths,
@@ -33,6 +35,13 @@ export async function saveAnalysis(input: {
     steps: input.draft.steps,
   });
   return doc;
+}
+
+export async function latestScore(userEmail: string): Promise<number | null> {
+  await dbConnect();
+  const previous = await Result.findOne({ userEmail }).sort({ createdAt: -1 }).select('score').lean();
+  const score = (previous as { score?: number } | null)?.score;
+  return typeof score === 'number' ? score : null;
 }
 
 export async function getOwnedResult(userEmail: string, id: string) {

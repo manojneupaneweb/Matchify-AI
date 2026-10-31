@@ -3,8 +3,8 @@ import { errorResponse } from '@/lib/http';
 import { AppError } from '@/lib/errors';
 import { logger } from '@/lib/logger';
 import { requireUser } from '@/lib/services/session';
-import { saveAnalysis } from '@/lib/services/analysis';
-import { runAnalysisPipeline } from '@/lib/ai/pipeline';
+import { latestScore, saveAnalysis } from '@/lib/services/analysis';
+import { runAgent } from '@/lib/agent/run';
 import { assertPdf, assertResumeText } from '@/lib/validation/pdf';
 import { jobDescriptionSchema } from '@/lib/validation/schemas';
 import { enforceAnalyzeRateLimit } from '@/lib/rate-limit';
@@ -44,9 +44,11 @@ export async function POST(req: Request) {
           controller.enqueue(encoder.encode(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`));
         };
         try {
-          const draft = await runAnalysisPipeline({
+          const previousScore = await latestScore(user.email);
+          const draft = await runAgent({
             resumeText,
             jobDescription: jd,
+            previousScore,
             onProgress: (step) => send('progress', { step }),
           });
           const saved = await saveAnalysis({
@@ -57,6 +59,8 @@ export async function POST(req: Request) {
           });
           send('done', {
             score: draft.score,
+            previousScore: draft.previousScore,
+            scoreDelta: draft.scoreDelta,
             improvedScore: draft.improvedScore,
             funnyMessage: draft.funnyMessage,
             strengths: draft.strengths,

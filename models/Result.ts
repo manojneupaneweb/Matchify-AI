@@ -22,6 +22,8 @@ const ResultSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  previousScore: { type: Number, default: null },
+  scoreDelta: { type: Number, default: null },
   funnyMessage: {
     type: String,
   },
