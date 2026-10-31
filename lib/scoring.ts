@@ -1,3 +1,4 @@
+// TODO: this list is tiny. "postgres" works, "react native" does not.
 const SYNONYMS: Record<string, string> = {
   js: 'javascript',
   javascript: 'javascript',
