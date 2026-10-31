@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { extractKeywords, rewriteBullet } from '../lib/agent/tools';
 import { agentTurn } from '../lib/agent/loop';
+import { runAgent } from '../lib/agent/run';
 import { z } from 'zod';
 import { resetEnvCache } from '../lib/env';
 
@@ -55,5 +56,37 @@ describe('agent retry', () => {
     expect(result.data.skills).toEqual(['react']);
     expect(result.toolCalls).toContain('extract_keywords');
     expect(n).toBeGreaterThan(2);
+  });
+});
+
+describe('critique retry', () => {
+  it('asks for a second critique when the first one is not ok', async () => {
+    const steps: string[] = [];
+    const fetchImpl = async (_url: string, init: RequestInit) => {
+      const system = JSON.parse(String(init.body)).systemInstruction.parts[0].text as string;
+      let text = '{"suggestions":[],"rewrites":[],"summary":"kept"}';
+      if (system.includes('Extract a resume')) {
+        text = '{"skills":["react"],"experience":[{"title":"dev","years":2}],"education":[],"summary":"builds ui"}';
+      } else if (system.includes('job requirements')) {
+        text = '{"mustHaveSkills":["react"],"niceToHaveSkills":[],"keywords":["react"],"experienceLevel":"mid","domain":"web"}';
+      } else if (system.includes('last critique failed')) {
+        steps.push('retry');
+        text = '{"ok":true,"issues":[],"funnyMessage":"Solid.","strengths":["react"],"weaknesses":[]}';
+      } else if (system.includes('Review this match')) {
+        steps.push('first');
+        text = '{"ok":false,"issues":["skill list disagrees"],"funnyMessage":"Off.","strengths":[],"weaknesses":["gap"]}';
+      }
+      return new Response(JSON.stringify(body(text)));
+    };
+
+    const draft = await runAgent({
+      resumeText: 'Built React interfaces for two years.',
+      jobDescription: 'Need a react developer for web work.',
+      fetchImpl: fetchImpl as typeof fetch,
+    });
+
+    expect(steps).toEqual(['first', 'retry']);
+    expect(draft.funnyMessage).toBe('Solid.');
+    expect(draft.critiqueIssues).toEqual([]);
   });
 });
