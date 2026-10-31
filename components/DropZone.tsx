@@ -1,10 +1,9 @@
-// @ts-nocheck
 'use client';
 import { useState, useRef } from 'react';
 
 export default function DropZone({ onFileSelect, file }) {
   const [isDragging, setIsDragging] = useState(false);
-  const fileInputRef = useRef(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleDragOver = (e) => {
     e.preventDefault();
@@ -38,7 +37,7 @@ export default function DropZone({ onFileSelect, file }) {
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
-      onClick={() => fileInputRef.current.click()}
+      onClick={() => fileInputRef.current?.click()}
       className={`
         border-2 border-dashed rounded-2xl p-10 text-center cursor-pointer transition-all duration-300
         ${isDragging 

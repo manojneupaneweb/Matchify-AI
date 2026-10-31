@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -34,7 +33,7 @@ export default function LegalPage() {
 
   return (
     <>
-      <Navbar />
+      <Navbar activeSection="legal" />
       <main className="relative pt-32 pb-20 bg-black min-h-screen">
         {/* Background orbs */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">

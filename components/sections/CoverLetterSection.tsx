@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client';
 import { useState, Suspense, lazy } from 'react';
 import { 
@@ -21,10 +20,10 @@ const Skeleton = ({ className = '' }) => (
 );
 
 export default function CoverLetterSection() {
-  const [file, setFile] = useState<any>(null);
+  const [file, setFile] = useState<File | null>(null);
   const [jd, setJd] = useState('');
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<string | null>(null);
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
 
@@ -45,15 +44,15 @@ export default function CoverLetterSection() {
         body: formData,
       });
       
-      const data = await response.json() as any;
-      
+      const data: unknown = await response.json();
+      const record = data && typeof data === 'object' ? (data as Record<string, unknown>) : {};
+      const message = typeof record.error === 'string' ? record.error : 'Failed to generate cover letter';
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to generate cover letter');
+        throw new Error(message);
       }
-      
-      setResult(data.coverLetter);
+      setResult(typeof record.coverLetter === 'string' ? record.coverLetter : '');
     } catch (err) {
-      setError(err.message);
+      setError(err instanceof Error ? err.message : 'Failed to generate cover letter');
     } finally {
       setLoading(false);
     }

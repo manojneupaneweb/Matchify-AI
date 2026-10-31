@@ -20,6 +20,19 @@ export default function AnalyzerSection({
   analysisStep,
   analysisError,
   onCancel,
+}: {
+  file: File | null;
+  setFile: (file: File | null | ((current: File | null) => File | null)) => void;
+  jd: string;
+  setJd: (value: string | ((current: string) => string)) => void;
+  loading: boolean;
+  progress: number;
+  onAnalyze: () => void;
+  analysisStep: string;
+  analysisError: string;
+  onCancel: () => void;
+  results?: unknown;
+  onReset?: () => void;
 }) {
 
   return (

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { NextResponse } from 'next/server';
 
 export async function GET() {
@@ -19,15 +18,15 @@ export async function GET() {
       return NextResponse.json({ status: 'failed', errorCode: response.status, error: errText }, { status: response.status });
     }
 
-    const data = await response.json() as any;
-    const modelNames = data.models?.map(m => m.name.replace('models/', '')) || [];
+    const data = (await response.json()) as { models?: { name: string }[] };
+    const modelNames = data.models?.map((model) => model.name.replace('models/', '')) || [];
     console.log('--- AUTHORIZED MODELS FOR THIS KEY ---');
     console.log(modelNames.join(', '));
     console.log('------------------------------------');
 
     return NextResponse.json({ status: 'success', authorizedModels: modelNames });
   } catch (error) {
-    console.error('Discovery Error:', error.message);
+    console.error('Discovery Error:', error instanceof Error ? error.message : 'unknown');
     return NextResponse.json({ error: { code: 'INTERNAL', message: 'Could not list models.' } }, { status: 500 });
   }
 }

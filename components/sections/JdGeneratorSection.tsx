@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client';
 import { useState } from 'react';
 import { 
@@ -16,7 +15,14 @@ export default function JdGeneratorSection() {
   const [idea, setIdea] = useState('');
   const [tone, setTone] = useState('professional');
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<{
+    title: string;
+    summary: string;
+    responsibilities?: string[];
+    skills?: string[];
+    qualifications?: string[];
+    experience: string;
+  } | null>(null);
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
 
@@ -40,15 +46,25 @@ export default function JdGeneratorSection() {
         body: JSON.stringify({ idea, tone }),
       });
       
-      const data = await response.json() as any;
-      
+      const data: unknown = await response.json();
+      const record = data && typeof data === 'object' ? (data as Record<string, unknown>) : {};
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to generate JD');
+        throw new Error(typeof record.error === 'string' ? record.error : 'Failed to generate JD');
       }
-      
-      setResult(data);
+      if (typeof record.title !== 'string' || typeof record.summary !== 'string' || typeof record.experience !== 'string') {
+        throw new Error('Failed to generate JD');
+      }
+      const asList = (value: unknown) => (Array.isArray(value) ? value.filter((item): item is string => typeof item === 'string') : []);
+      setResult({
+        title: record.title,
+        summary: record.summary,
+        experience: record.experience,
+        responsibilities: asList(record.responsibilities),
+        skills: asList(record.skills),
+        qualifications: asList(record.qualifications),
+      });
     } catch (err) {
-      setError(err.message);
+      setError(err instanceof Error ? err.message : 'Failed to generate JD');
     } finally {
       setLoading(false);
     }

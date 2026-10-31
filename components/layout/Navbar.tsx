@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import { Sparkles, Menu, X, ChevronRight, LogIn, LogOut, User, LayoutDashboard, ChevronDown } from 'lucide-react';
@@ -19,11 +18,11 @@ export default function Navbar({ activeSection }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-  const dropdownRef = useRef(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      if (dropdownRef.current && event.target instanceof Node && !dropdownRef.current.contains(event.target)) {
         setProfileOpen(false);
       }
     };
@@ -98,12 +97,12 @@ export default function Navbar({ activeSection }) {
                   className="flex items-center gap-3 border border-white/10 bg-white/5 pl-2 pr-4 py-1.5 rounded-full backdrop-blur-md hover:bg-white/10 transition-colors focus:outline-none"
                 >
                   <img
-                    src={session.user.image || `https://ui-avatars.com/api/?name=${session.user.name || 'User'}&background=8b5cf6&color=fff`}
-                    alt={session.user.name || 'User Profile'}
+                    src={session.user?.image || `https://ui-avatars.com/api/?name=${session.user?.name || 'User'}&background=8b5cf6&color=fff`}
+                    alt={session.user?.name || 'User Profile'}
                     className="w-8 h-8 rounded-full border border-violet-500/50 object-cover"
                   />
                   <span className="text-sm font-medium text-slate-200">
-                    Hi, {session.user.name?.split(' ')[0] || 'There'}
+                    Hi, {session.user?.name?.split(' ')[0] || 'There'}
                   </span>
                   <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${profileOpen ? 'rotate-180' : ''}`} />
                 </button>
@@ -112,8 +111,8 @@ export default function Navbar({ activeSection }) {
                 {profileOpen && (
                   <div className="absolute right-0 mt-3 w-56 p-2 bg-[#060917]/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-[0_8px_40px_rgba(0,0,0,0.4)] animate-fade-in z-50">
                     <div className="px-3 py-2 border-b border-white/10 mb-2">
-                      <p className="text-sm font-medium text-white line-clamp-1">{session.user.name}</p>
-                      <p className="text-xs text-slate-400 truncate">{session.user.email}</p>
+                      <p className="text-sm font-medium text-white line-clamp-1">{session.user?.name}</p>
+                      <p className="text-xs text-slate-400 truncate">{session.user?.email}</p>
                     </div>
 
                     <Link href="/dashboard" className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-slate-300 hover:text-white hover:bg-white/5 rounded-xl transition-colors">
@@ -180,13 +179,13 @@ export default function Navbar({ activeSection }) {
                 <div className="flex flex-col gap-2 p-4 bg-white/5 rounded-2xl border border-white/10">
                   <div className="flex items-center gap-3 mb-2">
                     <img
-                      src={session.user.image || `https://ui-avatars.com/api/?name=${session.user.name || 'User'}&background=8b5cf6&color=fff`}
+                      src={session.user?.image || `https://ui-avatars.com/api/?name=${session.user?.name || 'User'}&background=8b5cf6&color=fff`}
                       alt="Profile"
                       className="w-10 h-10 rounded-full border border-violet-500/50"
                     />
                     <div className="flex flex-col">
-                      <span className="text-sm font-semibold text-white">Hi, {session.user.name?.split(' ')[0] || 'There'}</span>
-                      <span className="text-xs text-slate-400 truncate max-w-[150px]">{session.user.email}</span>
+                      <span className="text-sm font-semibold text-white">Hi, {session.user?.name?.split(' ')[0] || 'There'}</span>
+                      <span className="text-xs text-slate-400 truncate max-w-[150px]">{session.user?.email}</span>
                     </div>
                   </div>
 

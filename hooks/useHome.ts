@@ -1,26 +1,47 @@
-// @ts-nocheck
 'use client';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useSession } from 'next-auth/react';
+import type { Session } from 'next-auth';
 import { useRouter } from 'next/navigation';
+
+type LiveStats = { totalUsers: number; totalAnalyses: number };
+type AnalyzeDone = { resultId?: string };
+
+function readStats(value: unknown): LiveStats | null {
+  if (!value || typeof value !== 'object') return null;
+  const record = value as Record<string, unknown>;
+  if (typeof record.totalUsers !== 'number' || typeof record.totalAnalyses !== 'number') return null;
+  return { totalUsers: record.totalUsers, totalAnalyses: record.totalAnalyses };
+}
+
+function errorMessage(value: unknown, fallback: string) {
+  if (!value || typeof value !== 'object') return fallback;
+  const record = value as Record<string, unknown>;
+  if (typeof record.error === 'string') return record.error;
+  if (record.error && typeof record.error === 'object') {
+    const nested = record.error as Record<string, unknown>;
+    if (typeof nested.message === 'string') return nested.message;
+  }
+  return fallback;
+}
 
 /**
  * Custom hook to manage the state and logic for the Matchify AI landing page.
  */
 export function useHome() {
-  const [file, setFile] = useState<any>(null);
+  const [file, setFile] = useState<File | null>(null);
   const [jd, setJd] = useState('');
   const [loading, setLoading] = useState(false);
-  const [results, setResults] = useState<any>(null);
+  const [results, setResults] = useState<AnalyzeDone | null>(null);
   const [progress, setProgress] = useState(0);
   const [analysisStep, setAnalysisStep] = useState('');
   const [analysisError, setAnalysisError] = useState('');
   const [stats, setStats] = useState({ totalUsers: 0, totalAnalyses: 0 });
   const [activeSection, setActiveSection] = useState('hero');
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<Session['user'] | null>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
 
-  const progressTimerRef = useRef(null);
+  const progressTimerRef = useRef<AbortController | null>(null);
   const router = useRouter();
 
   const { data: session } = useSession();
@@ -65,7 +86,7 @@ export function useHome() {
   const fetchStats = useCallback(async () => {
     try {
       const res = await fetch('/api/stats');
-      const data = await res.json() as any;
+      const data = readStats(await res.json());
       if (data) setStats(data);
     } catch {
       /* silent */
@@ -75,9 +96,10 @@ export function useHome() {
   const initUserStats = useCallback(() => {
     if (localStorage.getItem('matchify_user')) return;
     fetch('/api/stats', { method: 'POST' })
-      .then((r) => r.json() as any)
+      .then((r) => r.json())
       .then((data) => {
-        if (data) setStats(data);
+        const stats = readStats(data);
+        if (stats) setStats(stats);
         localStorage.setItem('matchify_user', 'true');
       })
       .catch(() => {});
@@ -118,14 +140,14 @@ export function useHome() {
     try {
       const res = await fetch('/api/analyze', { method: 'POST', body: formData, signal: controller.signal });
       if (!res.ok) {
-        const data = await res.json() as any;
-        throw new Error(data?.error?.message || data?.error || 'Analysis failed');
+        const data: unknown = await res.json();
+        throw new Error(errorMessage(data, 'Analysis failed'));
       }
       const reader = res.body?.getReader();
       if (!reader) throw new Error('No response stream');
       const decoder = new TextDecoder();
       let buffer = '';
-      let finalPayload = null;
+      let finalPayload: { resultId?: string } | null = null;
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
@@ -154,7 +176,9 @@ export function useHome() {
       if (finalPayload.resultId) router.push(`/dashboard/results/${finalPayload.resultId}`);
     } catch (err) {
       setProgress(0);
-      if (err.name !== 'AbortError') setAnalysisError(err.message);
+      if (!(err instanceof Error) || err.name !== 'AbortError') {
+        setAnalysisError(err instanceof Error ? err.message : 'Analysis failed');
+      }
     } finally {
       setLoading(false);
     }
@@ -171,7 +195,7 @@ export function useHome() {
   }, [scrollToAnalyzer]);
 
   const cancelAnalyze = useCallback(() => {
-    progressTimerRef.current?.abort?.();
+    progressTimerRef.current?.abort();
     setLoading(false);
     setProgress(0);
   }, []);

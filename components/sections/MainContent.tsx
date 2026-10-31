@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client';
 import { useHome } from '@/hooks/useHome';
 
@@ -73,7 +72,7 @@ export default function MainContent() {
         <PricingSection />
 
         <SectionDivider />
-        <CTASection />
+        <CTASection onScrollToAnalyzer={scrollToAnalyzer} />
 
       </main>
 

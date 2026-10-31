@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client';
 import {
   Chart as ChartJS,
@@ -85,7 +84,7 @@ export function KeywordPie({ data }) {
   const options = {
     plugins: {
       legend: {
-        position: 'bottom',
+        position: 'bottom' as const,
         labels: { color: '#94a3b8', padding: 20 },
       },
     },

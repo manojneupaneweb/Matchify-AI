@@ -1,4 +1,3 @@
-// @ts-nocheck
 "use client";
 
 import { useState, useRef } from 'react';
@@ -14,7 +13,7 @@ export default function ProfileWrapper({ initialUser }) {
     profilePic: initialUser.profilePic || initialUser.image || ''
   });
   const [isLoading, setIsLoading] = useState(false);
-  const fileInputRef = useRef(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

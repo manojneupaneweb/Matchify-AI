@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/authOptions';
 import { redirect } from 'next/navigation';
@@ -12,26 +11,34 @@ import ProfileWrapper from './ProfileWrapper';
 export default async function ProfilePage() {
   const session = await getServerSession(authOptions);
   
-  if (!session) {
+  if (!session?.user?.email) {
     redirect('/login');
   }
 
   await dbConnect();
-  
-  // Fetch full user locally to pass up-to-date fields like phone, address, profilePic
+
+  type ProfileUser = {
+    name?: string | null;
+    email?: string | null;
+    image?: string | null;
+    phone?: string;
+    address?: string;
+    profilePic?: string;
+  };
+
   const userDoc = await UserModel.findOne({ email: session.user.email }).lean();
-  let userDetails = session.user;
+  let userDetails: ProfileUser = session.user;
 
   if (userDoc) {
     userDetails = {
       ...session.user,
       name: userDoc.name || session.user.name,
-      phone: userDoc.phone,
-      address: userDoc.address,
-      profilePic: userDoc.profilePic
+      phone: typeof userDoc.phone === 'string' ? userDoc.phone : undefined,
+      address: typeof userDoc.address === 'string' ? userDoc.address : undefined,
+      profilePic: typeof userDoc.profilePic === 'string' ? userDoc.profilePic : undefined,
     };
   }
-  
+
   const results = await Result.find({ userEmail: session.user.email }).lean();
   const totalUserAnalyses = results.length;
   
