@@ -1,23 +1,11 @@
 import { getEnv } from './env';
 import { AppError } from './errors';
+import { dbConnect } from './mongodb';
+import RateLimit from '../models/RateLimit';
 
-type Bucket = { count: number; resetAt: number };
+type Hit = { ok: boolean; retryAfter: number };
 
-const memory = new Map<string, Bucket>();
-
-function memoryHit(key: string, limit: number, windowMs: number): { ok: boolean; retryAfter: number } {
-  const now = Date.now();
-  const current = memory.get(key);
-  if (!current || current.resetAt <= now) {
-    memory.set(key, { count: 1, resetAt: now + windowMs });
-    return { ok: true, retryAfter: Math.ceil(windowMs / 1000) };
-  }
-  current.count += 1;
-  const retryAfter = Math.max(1, Math.ceil((current.resetAt - now) / 1000));
-  return { ok: current.count <= limit, retryAfter };
-}
-
-async function upstashHit(key: string, limit: number, windowMs: number) {
+async function upstashHit(key: string, limit: number, windowMs: number): Promise<Hit | null> {
   const env = getEnv();
   if (!env.UPSTASH_REDIS_REST_URL || !env.UPSTASH_REDIS_REST_TOKEN) return null;
   const response = await fetch(env.UPSTASH_REDIS_REST_URL, {
@@ -44,6 +32,25 @@ async function upstashHit(key: string, limit: number, windowMs: number) {
   return { ok: count <= limit, retryAfter: Math.ceil(windowMs / 1000) };
 }
 
+async function mongoHit(key: string, limit: number, windowMs: number): Promise<Hit> {
+  await dbConnect();
+  const now = new Date();
+  const current = await RateLimit.findOneAndUpdate(
+    { key, expiresAt: { $gt: now } },
+    { $inc: { count: 1 } },
+    { new: true },
+  ).lean<{ count: number; expiresAt: Date } | null>();
+
+  if (!current) {
+    const expiresAt = new Date(now.getTime() + windowMs);
+    await RateLimit.findOneAndUpdate({ key }, { key, count: 1, expiresAt }, { upsert: true });
+    return { ok: true, retryAfter: Math.ceil(windowMs / 1000) };
+  }
+
+  const retryAfter = Math.max(1, Math.ceil((new Date(current.expiresAt).getTime() - now.getTime()) / 1000));
+  return { ok: current.count <= limit, retryAfter };
+}
+
 const scopeAnalyze = 'analyze';
 const scopeWrite = 'write';
 
@@ -53,7 +60,7 @@ async function enforceRateLimit(scope: string, userKey: string, ip: string, mess
   const limit = env.RATE_LIMIT_MAX;
   for (const key of [`${scope}:user:${userKey}`, `${scope}:ip:${ip}`]) {
     const remote = await upstashHit(key, limit, windowMs).catch(() => null);
-    const result = remote ?? memoryHit(key, limit, windowMs);
+    const result = remote ?? (await mongoHit(key, limit, windowMs));
     if (!result.ok) {
       throw new AppError('RATE_LIMITED', message, 429, result.retryAfter);
     }
@@ -72,6 +79,7 @@ export function enforceWriteRateLimit(userKey: string, ip: string) {
   return enforceRateLimit(scopeWrite, userKey, ip, 'Too many requests. Try again shortly.');
 }
 
-export function resetRateLimitMemory() {
-  memory.clear();
+export async function resetRateLimitMemory() {
+  await dbConnect();
+  await RateLimit.deleteMany({});
 }

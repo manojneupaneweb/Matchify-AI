@@ -1,4 +1,30 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+
+const rateRows = new Map<string, { count: number; expiresAt: Date }>();
+
+vi.mock('../lib/mongodb', () => ({
+  dbConnect: vi.fn(async () => ({})),
+  default: vi.fn(async () => ({})),
+}));
+
+vi.mock('../models/RateLimit', () => ({
+  default: {
+    findOneAndUpdate(query: { key: string; expiresAt?: { $gt: Date } }, update: { $inc?: { count: number }; count?: number; expiresAt?: Date; key?: string }) {
+      const row = rateRows.get(query.key);
+      const active = row && (!query.expiresAt || row.expiresAt > query.expiresAt.$gt);
+      if (update.$inc) {
+        if (!active || !row) return { lean: async () => null };
+        row.count += update.$inc.count;
+        return { lean: async () => row };
+      }
+      rateRows.set(query.key, { count: update.count ?? 1, expiresAt: update.expiresAt ?? new Date() });
+      return { lean: async () => rateRows.get(query.key) };
+    },
+    async deleteMany() {
+      rateRows.clear();
+    },
+  },
+}));
 import { z } from 'zod';
 import { generateStructured } from '../lib/ai/gemini';
 import { runAnalysisPipeline } from '../lib/ai/pipeline';
@@ -141,7 +167,7 @@ describe('pipeline', () => {
 
 describe('rate limit', () => {
   it('returns 429 after the configured limit', async () => {
-    resetRateLimitMemory();
+    await resetRateLimitMemory();
     process.env.RATE_LIMIT_MAX = '1';
     resetEnvCache();
     await enforceAnalyzeRateLimit('user@example.com', '127.0.0.1');
