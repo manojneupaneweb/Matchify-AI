@@ -1,6 +1,6 @@
 # Architecture
 
-Matchify AI is a Next.js App Router application. The browser uploads a PDF and a job description to `POST /api/analyze`. The route checks the session, rate limit, PDF magic bytes, and text length, then streams progress with server-sent events.
+The home page posts a PDF and a job description to `POST /api/analyze`. The route checks the session, the rate limit, the PDF header, and the text length, then streams progress as server-sent events.
 
 The pipeline in `lib/ai/pipeline.ts` is:
 
