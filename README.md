@@ -38,7 +38,7 @@ flowchart LR
   store --> dash[Dashboard]
 ```
 
-The agent lives in `lib/agent/`. It can call `extract_keywords` and `rewrite_bullet`. Those tools run in our code. The model chooses when to call them. After the skills are out, `lib/scoring.ts` computes the number. A critique step can run a second time if it marks its own review as not ok. Bad JSON is sent back up to twice.
+The agent lives in `lib/agent/`. It can call `extract_keywords` and `rewrite_bullet`. Those tools run in our code. The model chooses when to call them. After the skills are out, `lib/scoring.ts` computes the number. A critique step can run a second time if it marks its own review as not ok. Bad JSON is sent back up to twice. The browser reads progress as server-sent events. `proxy.ts` sends unsigned visitors to login and blocks non-admins from `/admin`.
 
 If the same resume text and job description were analyzed in the last hour, the model is skipped and the cached draft is reused. The comparison with your previous score still happens after that.
 
@@ -104,8 +104,8 @@ Playwright sets an `e2e_user` cookie when `E2E_AUTH_BYPASS=1` and stubs `/api/an
 - The synonym list is short. Most tools are matched by the exact normalized name.
 - Cover letters and generated JDs do not run the critique loop or the score.
 - MongoDB deletes cached analyses about an hour after they are written. The TTL job is not instant.
-- Rate limit is per server process unless Upstash is set.
-- A lot of the older pages still have `// @ts-nocheck`. `noImplicitAny` is off so those files compile. New code in `lib/` is stricter.
+- Rate limits are stored in MongoDB (or Upstash if those env vars are set), per user and per IP. The window matches `RATE_LIMIT_WINDOW_MS`.
+- `noImplicitAny` is still off. `lib/` is stricter than the pages.
 - The analysis holds the HTTP connection open. `maxDuration` is 60 seconds. There is no job queue.
 - `POST /api/stats` still bumps a public counter. I would not trust that number.
 - No license file yet.

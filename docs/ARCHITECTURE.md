@@ -1,6 +1,6 @@
 # Architecture
 
-The home page posts a PDF and a job description to `POST /api/analyze`. The route checks the session, the rate limit, the PDF header, the size, and the page count, then streams progress as server-sent events.
+The home page posts a PDF and a job description to `POST /api/analyze`. `proxy.ts` requires a session for that route, the dashboard, and profile, and an admin for `/admin`. The route then checks the rate limit (MongoDB counters, or Upstash when configured), the PDF header, the size, and the page count, then streams Parsing, Extracting, Matching, Scoring, and Suggesting as server-sent events.
 
 `lib/agent/run.ts` is what actually runs:
 
