@@ -18,7 +18,7 @@ export function errorResponse(error: unknown) {
     message: error instanceof Error ? error.message : 'unknown',
   });
   return NextResponse.json(
-    { error: { code: 'INTERNAL', message: 'Something went wrong. Please try again.' } },
+    { error: { code: 'INTERNAL', message: 'Something broke on the server. Try again.' } },
     { status: 500 },
   );
 }
