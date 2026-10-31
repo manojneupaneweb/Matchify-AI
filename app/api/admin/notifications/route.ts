@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { requireAdmin } from '@/lib/services/session';
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
@@ -39,7 +38,7 @@ export async function GET() {
     ]);
 
     // Build unified notification list
-    const notifications = [];
+    const notifications: any[] = [];
 
     // New user signups
     newUsers.forEach(u => {
@@ -81,7 +80,7 @@ export async function GET() {
     });
 
     // Sort by most recent
-    notifications.sort((a, b) => new Date(b.at) - new Date(a.at));
+    notifications.sort((a, b) => new Date(b.at).getTime() - new Date(a.at).getTime());
 
     // System-level alert if totals look off
     if (totalResults === 0) {

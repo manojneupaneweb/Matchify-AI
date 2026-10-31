@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client';
 
 import {
@@ -27,7 +26,7 @@ ChartJS.register(
 
 export default function UserScoreChart({ scores }) {
   // Sort scores by date
-  const sortedScores = [...scores].sort((a, b) => new Date(a.date) - new Date(b.date));
+  const sortedScores = [...scores].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
   
   const data = {
     labels: sortedScores.map(s => new Date(s.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })),
@@ -67,7 +66,7 @@ export default function UserScoreChart({ scores }) {
         backgroundColor: 'rgba(0, 0, 0, 0.8)',
         padding: 12,
         cornerRadius: 12,
-        titleFont: { size: 12, weight: 'bold', family: 'Inter' },
+        titleFont: { size: 12, weight: 'bold' as const, family: 'Inter' },
         bodyFont: { size: 12, family: 'Inter' },
         displayColors: false,
       },
@@ -100,7 +99,7 @@ export default function UserScoreChart({ scores }) {
 
   return (
     <div className="h-full w-full">
-      <Line data={data} options={options} />
+      <Line data={data} options={options as any} />
     </div>
   );
 }

@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
@@ -42,7 +41,7 @@ const NAV_GROUPS = [
 
 /* ── Helpers ─────────────────────────────────────────────── */
 function timeAgo(dateStr) {
-  const diff = Math.floor((Date.now() - new Date(dateStr)) / 1000);
+  const diff = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000);
   if (diff < 60)   return `${diff}s ago`;
   if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
   if (diff < 86400)return `${Math.floor(diff / 3600)}h ago`;
@@ -216,7 +215,7 @@ export default function AdminLayout({ children }) {
   // Notification state
   const [notifOpen, setNotifOpen]   = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
-  const notifRef = useRef(null);
+  const notifRef = useRef<HTMLDivElement>(null);
 
   // Fetch unread count on mount
   useEffect(() => {

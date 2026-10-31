@@ -1,4 +1,3 @@
-// @ts-nocheck
 import dbConnect from '../../../lib/mongodb';
 import User from '../../../models/User';
 
@@ -260,7 +259,7 @@ export default async function UsersPage() {
                 
                 {users.length === 0 && (
                   <tr>
-                    <td colSpan="5" className="px-6 py-12 text-center">
+                    <td colSpan={5} className="px-6 py-12 text-center">
                       <div className="flex flex-col items-center">
                         <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center mb-4">
                           <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

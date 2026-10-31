@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -12,7 +11,7 @@ import Link from 'next/link';
 /* ─────────────────────────────────────────────────────────
    KPI CARD
 ───────────────────────────────────────────────────────── */
-function KpiCard({ title, value, sub, icon: Icon, trend, gradient }) {
+function KpiCard({ title, value, sub, icon: Icon, trend, gradient }: { title: any; value: any; sub: any; icon: any; trend?: number; gradient: any }) {
   const gradients = {
     violet: 'from-violet-500 to-purple-600',
     cyan:   'from-cyan-500 to-blue-600',
@@ -84,7 +83,7 @@ export default function AdminDashboardPage() {
       setLastRefresh(new Date());
       setError(null);
     } catch (e) {
-      setError(e.message);
+      setError(e instanceof Error ? e.message : 'Failed to fetch');
     } finally {
       setLoading(false);
       setRefreshing(false);

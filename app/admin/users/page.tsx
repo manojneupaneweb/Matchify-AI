@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -16,7 +15,7 @@ export default function AdminUsersPage() {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const params = new URLSearchParams({ page, limit, search, role });
+      const params = new URLSearchParams({ page: String(page), limit: String(limit), search, role });
       const res = await fetch(`/api/admin/users?${params}`);
       const json = await res.json() as any;
       setUsers(json.users || []);

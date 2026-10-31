@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client';
 
 import {
@@ -71,7 +70,7 @@ export function SkillsRadar({ data }) {
       legend: { display: false },
       tooltip: {
         backgroundColor: 'rgba(0, 0, 0, 0.8)',
-        titleFont: { size: 12, weight: 'bold' },
+        titleFont: { size: 12, weight: 'bold' as const },
         bodyFont: { size: 12 },
         padding: 12,
         cornerRadius: 12,
@@ -83,7 +82,7 @@ export function SkillsRadar({ data }) {
 
   return (
     <div className="h-full w-full flex items-center justify-center">
-      <Radar data={chartData} options={options} />
+      <Radar data={chartData} options={options as any} />
     </div>
   );
 }
@@ -106,7 +105,7 @@ export function KeywordCoverage({ matched, missing }) {
     cutout: '80%',
     plugins: {
       legend: { 
-        position: 'bottom', 
+        position: 'bottom' as const, 
         labels: { 
           boxWidth: 8, 
           usePointStyle: true,
@@ -126,7 +125,7 @@ export function KeywordCoverage({ matched, missing }) {
 
   return (
     <div className="h-full w-full">
-      <Doughnut data={chartData} options={options} />
+      <Doughnut data={chartData} options={options as any} />
     </div>
   );
 }

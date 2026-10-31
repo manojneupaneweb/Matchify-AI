@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/authOptions';
 import { redirect } from 'next/navigation';
@@ -23,7 +22,7 @@ export default async function ResultDetailsPage({ params }) {
     if (customSession) {
       const payload = await decrypt(customSession.value);
       if (payload) {
-        session = { user: payload };
+        session = { user: payload } as unknown as NonNullable<typeof session>;
       }
     }
   }
@@ -37,7 +36,7 @@ export default async function ResultDetailsPage({ params }) {
   await dbConnect();
   
   // Fetch specific result ensuring it belongs to user
-  const resultData = await Result.findOne({ _id: id, userEmail: session.user.email }).lean();
+  const resultData = await Result.findOne({ _id: id, userEmail: session.user?.email }).lean();
 
   if (!resultData) {
     return (

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { requireAdmin } from '@/lib/services/session';
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
@@ -31,7 +30,7 @@ export async function GET() {
         score: null,
         at: u.createdAt,
       })),
-    ].sort((a, b) => new Date(b.at) - new Date(a.at)).slice(0, 30);
+    ].sort((a, b) => new Date(b.at).getTime() - new Date(a.at).getTime()).slice(0, 30);
 
     return NextResponse.json({ feed });
   } catch (error) {

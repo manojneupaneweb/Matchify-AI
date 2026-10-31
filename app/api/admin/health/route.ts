@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { requireAdmin } from '@/lib/services/session';
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
@@ -23,7 +22,7 @@ export async function GET() {
       User.estimatedDocumentCount(),
       Result.estimatedDocumentCount(),
       Stats.estimatedDocumentCount(),
-      mongoose.connection.db.stats(),
+      mongoose.connection.db?.stats(),
     ]);
 
     const collections = [
@@ -37,9 +36,9 @@ export async function GET() {
       dbPingMs: dbPing,
       dbState: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
       dbName: mongoose.connection.name,
-      dataSize: dbStats.dataSize,
-      storageSize: dbStats.storageSize,
-      indexSize: dbStats.indexSize,
+      dataSize: dbStats?.dataSize ?? 0,
+      storageSize: dbStats?.storageSize ?? 0,
+      indexSize: dbStats?.indexSize ?? 0,
       collections,
       uptime: process.uptime(),
       nodeVersion: process.version,

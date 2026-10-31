@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client';
 import { useState, useEffect } from 'react';
 import { TrendingUp, RefreshCw, Award, Users, ArrowUpRight, ArrowDownRight, Star } from 'lucide-react';
@@ -74,7 +73,7 @@ export default function AdminReportsPage() {
           diff={scoreDiff}
           unit="%"
           icon={Award}
-          positive={parseFloat(scoreDiff) >= 0}
+          positive={parseFloat(scoreDiff || '0') >= 0}
         />
       </div>
 
@@ -178,7 +177,7 @@ export default function AdminReportsPage() {
   );
 }
 
-function WoWCard({ label, current, previous, diff, unit, icon: Icon }) {
+function WoWCard({ label, current, previous, diff, unit, icon: Icon, positive }: { label: any; current: any; previous: any; diff: any; unit: any; icon: any; positive?: boolean }) {
   const isUp = parseFloat(diff) >= 0;
   return (
     <div className="glass-panel bg-white/[0.02] border-white/5 p-5">

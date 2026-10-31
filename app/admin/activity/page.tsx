@@ -1,10 +1,9 @@
-// @ts-nocheck
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import { Activity, RefreshCw, FileText, UserPlus, Zap, Clock } from 'lucide-react';
 
 function timeAgo(dateStr) {
-  const diff = Math.floor((Date.now() - new Date(dateStr)) / 1000);
+  const diff = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000);
   if (diff < 60) return `${diff}s ago`;
   if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
   if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
@@ -22,7 +21,7 @@ export default function AdminActivityPage() {
   const [feed, setFeed] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [autoRefresh, setAutoRefresh] = useState(true);
-  const intervalRef = useRef(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const fetchFeed = async () => {
     try {
@@ -38,9 +37,11 @@ export default function AdminActivityPage() {
     if (autoRefresh) {
       intervalRef.current = setInterval(fetchFeed, 10000);
     } else {
-      clearInterval(intervalRef.current);
+      if (intervalRef.current) clearInterval(intervalRef.current);
     }
-    return () => clearInterval(intervalRef.current);
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
   }, [autoRefresh]);
 
   const analyses = feed.filter(f => f.type === 'analysis');

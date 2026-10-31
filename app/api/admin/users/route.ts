@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { requireAdmin } from '@/lib/services/session';
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
@@ -16,7 +15,7 @@ export async function GET(request) {
   try {
     await dbConnect();
 
-    const query = {};
+    const query: Record<string, unknown> = {};
     if (search) {
       const escaped = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       query.$or = [

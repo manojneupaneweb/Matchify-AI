@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/authOptions';
 import { redirect } from 'next/navigation';
@@ -19,7 +18,7 @@ export default async function AnalysesHistoryPage({ searchParams }) {
     if (customSession) {
       const payload = await decrypt(customSession.value);
       if (payload) {
-        session = { user: payload };
+        session = { user: payload } as unknown as NonNullable<typeof session>;
       }
     }
   }
@@ -36,12 +35,12 @@ export default async function AnalysesHistoryPage({ searchParams }) {
   
   // Fetch paginated results and total count
   const [results, totalCount] = await Promise.all([
-    Result.find({ userEmail: session.user.email })
+    Result.find({ userEmail: session.user?.email })
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
       .lean(),
-    Result.countDocuments({ userEmail: session.user.email })
+    Result.countDocuments({ userEmail: session.user?.email })
   ]);
 
   const totalPages = Math.ceil(totalCount / limit);

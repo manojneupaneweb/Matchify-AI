@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/authOptions';
 import { redirect } from 'next/navigation';
@@ -32,7 +31,7 @@ export default async function DashboardPage() {
     if (customSession) {
       const payload = await decrypt(customSession.value);
       if (payload) {
-        session = { user: payload };
+        session = { user: payload } as unknown as NonNullable<typeof session>;
       }
     }
   }
@@ -44,7 +43,7 @@ export default async function DashboardPage() {
   await dbConnect();
   
   // Fetch all user results for stats and charts
-  const allUserResults = await Result.find({ userEmail: session.user.email }).sort({ createdAt: 1 }).lean();
+  const allUserResults = await Result.find({ userEmail: session.user?.email }).sort({ createdAt: 1 }).lean();
   const totalUserAnalyses = allUserResults.length;
   
   // 1. KPI Metrics
@@ -92,7 +91,7 @@ export default async function DashboardPage() {
         map[item] = (map[item] || 0) + 1;
       });
     });
-    return Object.entries(map)
+    return Object.entries(map as Record<string, number>)
       .sort((a, b) => b[1] - a[1])
       .slice(0, 10); // Top 10
   };
@@ -102,7 +101,7 @@ export default async function DashboardPage() {
   
   // 7. Analysis Velocity (Scans per day)
   const daysSinceFirstScan = totalUserAnalyses > 0 
-    ? Math.max(1, Math.ceil((new Date() - new Date(allUserResults[0].createdAt)) / (1000 * 60 * 60 * 24)))
+    ? Math.max(1, Math.ceil((Date.now() - new Date(allUserResults[0].createdAt).getTime()) / (1000 * 60 * 60 * 24)))
     : 1;
   const scanVelocity = (totalUserAnalyses / daysSinceFirstScan).toFixed(2);
 
@@ -111,7 +110,7 @@ export default async function DashboardPage() {
 
   // 9. Goal Progress (Targeting 90% Avg)
   const targetScore = 90;
-  const currentAvgNum = parseFloat(userSuccessRate);
+  const currentAvgNum = parseFloat(String(userSuccessRate));
   const goalProgress = Math.min(100, Math.round((currentAvgNum / targetScore) * 100));
 
   // 10. Skill Momentum (Compare last 3 scans vs all scans avg)
@@ -122,7 +121,7 @@ export default async function DashboardPage() {
   const momentum = (lastThreeAvg - currentAvgNum).toFixed(1);
 
   // User/Profile Fetch (used for best match / scans only)
-  const userDoc = await User.findOne({ email: session.user.email }).lean();
+  const userDoc = await User.findOne({ email: session.user?.email }).lean();
 
   const recentScans = [...allUserResults].reverse().slice(0, 5);
 
@@ -174,7 +173,7 @@ export default async function DashboardPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
           {[
             { icon: BarChart3, label: 'TOTAL SCANS', value: totalUserAnalyses, sub: 'Analyses generated', color: 'text-blue-400' },
-            { icon: Target, label: 'AVG SCORE', value: `${userSuccessRate}%`, sub: `${momentum > 0 ? '+' : ''}${momentum}% momentum`, color: 'text-violet-400' },
+            { icon: Target, label: 'AVG SCORE', value: `${userSuccessRate}%`, sub: `${Number(momentum) > 0 ? '+' : ''}${momentum}% momentum`, color: 'text-violet-400' },
             { icon: Award, label: 'MASTERY', value: excellentMatches, sub: excellentMatches > 0 ? 'Excellence achieved' : 'Aiming for 80+', color: 'text-emerald-400' },
             { icon: Activity, label: 'VELOCITY', value: scanVelocity, sub: 'Scans per day avg', color: 'text-cyan-400' },
           ].map((kpi, i) => (
@@ -214,7 +213,7 @@ export default async function DashboardPage() {
           <div className="glass-panel p-8 border-white/5 bg-white/[0.02]">
             <h3 className="text-sm font-black text-white uppercase tracking-widest mb-8">Core Competencies</h3>
             <div className="space-y-6">
-              {topStrengths.map(([name, count], i) => (
+              {topStrengths.map(([name, count]: [string, number], i) => (
                 <div key={i} className="space-y-2">
                   <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
                     <span className="text-slate-300">{name}</span>
@@ -231,7 +230,7 @@ export default async function DashboardPage() {
           <div className="glass-panel p-8 border-white/5 bg-white/[0.02]">
             <h3 className="text-sm font-black text-white uppercase tracking-widest mb-8">Strategic Skill Gaps</h3>
             <div className="flex flex-wrap gap-3">
-              {topMissingKeywords.map(([name, count], i) => (
+              {topMissingKeywords.map(([name, count]: [string, number], i) => (
                 <span key={i} className="px-4 py-2 bg-rose-500/5 text-rose-400 rounded-xl text-[10px] font-black uppercase tracking-widest border border-rose-500/10 flex items-center gap-2 hover:bg-rose-500/10 transition-colors">
                   {name} <span className="bg-rose-500 text-white px-1.5 py-0.5 rounded-md text-[8px]">{count}</span>
                 </span>

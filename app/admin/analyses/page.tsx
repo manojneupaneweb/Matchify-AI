@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -15,7 +14,7 @@ export default function AdminAnalysesPage() {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const params = new URLSearchParams({ page, limit, search });
+      const params = new URLSearchParams({ page: String(page), limit: String(limit), search });
       const res = await fetch(`/api/admin/analyses?${params}`);
       const json = await res.json() as any;
       setAnalyses(json.analyses || []);
