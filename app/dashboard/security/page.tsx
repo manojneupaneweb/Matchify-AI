@@ -51,7 +51,7 @@ export default function SecurityPage() {
         setStatus({ type: 'error', message: data.error || 'Failed to update password' });
       }
     } catch {
-      setStatus({ type: 'error', message: 'An unexpected error occurred' });
+      setStatus({ type: 'error', message: 'Could not update the password.' });
     } finally {
       setIsLoading(false);
     }
@@ -69,7 +69,7 @@ export default function SecurityPage() {
         setLogoutAllStatus({ type: 'error', message: 'Failed to logout all sessions.' });
       }
     } catch {
-      setLogoutAllStatus({ type: 'error', message: 'An unexpected error occurred.' });
+      setLogoutAllStatus({ type: 'error', message: 'Could not sign out the other sessions.' });
     } finally {
       setLogoutAllLoading(false);
     }

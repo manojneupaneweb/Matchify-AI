@@ -45,7 +45,7 @@ export default function SettingsPage() {
         setTerminateError(data.error || 'Failed to terminate account.');
       }
     } catch {
-      setTerminateError('An unexpected error occurred.');
+      setTerminateError('Could not delete the account.');
     } finally {
       setTerminateLoading(false);
     }
@@ -80,7 +80,7 @@ export default function SettingsPage() {
         setStatus({ type: 'error', message: data.error || 'Failed to update password' });
       }
     } catch (error) {
-      setStatus({ type: 'error', message: 'An unexpected error occurred' });
+      setStatus({ type: 'error', message: 'Could not save that.' });
     } finally {
       setIsLoading(false);
     }
