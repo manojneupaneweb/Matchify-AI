@@ -52,7 +52,7 @@ export async function loginAction(prevState, formData) {
 
   } catch (error) {
     console.error('Login action error:', error);
-    return { error: 'Something went wrong. Please try again.' };
+    return { error: 'Login failed. Try again.' };
   }
   
   // Redirect outside try-catch to avoid swallowing redirect errors
@@ -110,7 +110,7 @@ export async function registerAction(prevState, formData) {
 
   } catch (error) {
     console.error('Registration action error:', error);
-    return { error: 'Something went wrong. Please try again.' };
+    return { error: 'Could not create the account. Try again.' };
   }
   
   redirect('/dashboard');
