@@ -15,6 +15,7 @@ export async function GET() {
   }
 }
 
+// TODO: anyone can POST and inflate totalUsers. Do not show this as a real user count.
 export async function POST(req) {
   try {
     await dbConnect();
