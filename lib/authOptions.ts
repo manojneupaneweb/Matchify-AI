@@ -45,13 +45,18 @@ export const authOptions: NextAuthOptions = {
         console.log('JWT Initial Sign-in:', user.email);
         token.lastLoginAt = user.lastLoginAt || null;
         token.tokenVersion = user.tokenVersion ?? 0;
+        token.role = user.role || 'user';
         return token;
       }
       
       if (token?.email) {
         try {
           await dbConnect();
-          const dbUser = await User.findOne({ email: token.email }).select('tokenVersion').lean();
+          const dbUser = (await User.findOne({ email: token.email }).select('tokenVersion role').lean()) as {
+            tokenVersion?: number;
+            role?: string;
+          } | null;
+          token.role = dbUser?.role || token.role || 'user';
           const dbVersion = dbUser?.tokenVersion ?? 0;
           const tokenVersion = token.tokenVersion ?? 0;
           
@@ -76,6 +81,7 @@ export const authOptions: NextAuthOptions = {
         session.user.id = token.sub;
         session.user.lastLoginAt = token.lastLoginAt || null;
         session.user.tokenVersion = token.tokenVersion;
+        session.user.role = token.role;
       }
       return session;
     },

@@ -17,6 +17,9 @@ export default function AnalyzerSection({
   loading,
   progress,
   onAnalyze,
+  analysisStep,
+  analysisError,
+  onCancel,
 }) {
 
   return (
@@ -49,7 +52,7 @@ export default function AnalyzerSection({
                 </div>
                 <div>
                   <h3 className="text-lg font-black text-white uppercase tracking-tighter italic">Upload Resume</h3>
-                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">PDF · DOCX · MAX 5MB</p>
+                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">PDF only · max 5 MB</p>
                 </div>
               </div>
 
@@ -106,6 +109,7 @@ export default function AnalyzerSection({
               <div className="relative">
                 <textarea
                   id="job-description"
+                  aria-label="Job description"
                   placeholder="Paste the full job description here..."
                   value={jd}
                   onChange={(e) => setJd(e.target.value)}
@@ -129,7 +133,7 @@ export default function AnalyzerSection({
                 <div className="flex items-center gap-3">
                   <div className="w-2 h-2 rounded-full bg-violet-500 animate-ping" />
                   <span className="text-[10px] font-black text-violet-400 uppercase tracking-[0.2em]">
-                    {progress < 30 ? 'Processing Document' : progress < 70 ? 'AI Neural Analysis' : 'Synchronizing Results'}
+                    {analysisStep || 'Working'}
                   </span>
                 </div>
                 <span className="text-sm font-black text-white tabular-nums tracking-tighter">{Math.round(progress)}%</span>
@@ -144,9 +148,14 @@ export default function AnalyzerSection({
           )}
 
           {/* Analyze button */}
-          <div className="text-center mt-12">
+          {analysisError && (
+            <p role="alert" className="mt-8 text-sm text-rose-300">{analysisError}</p>
+          )}
+
+          <div className="text-center mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
             <button
               id="analyze-btn"
+              type="button"
               onClick={onAnalyze}
               disabled={loading || !file || !jd.trim()}
               className="btn-primary text-sm px-12 py-5 rounded-2xl disabled:opacity-20 disabled:grayscale transition-all duration-500 shadow-violet-500/20 group relative overflow-hidden"
@@ -165,6 +174,11 @@ export default function AnalyzerSection({
                 </>
               )}
             </button>
+            {loading && (
+              <button type="button" onClick={onCancel} className="btn-secondary px-8 py-5">
+                Cancel
+              </button>
+            )}
             {(!file || !jd.trim()) && !loading && (
               <div className="mt-6 flex items-center justify-center gap-2 text-[10px] font-black text-slate-600 uppercase tracking-[0.3em]">
                 <AlertCircle className="w-3.5 h-3.5" />

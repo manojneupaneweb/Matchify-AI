@@ -114,9 +114,40 @@ export default function ResultsDisplay({ results }) {
         ))}
       </div>
 
+      {results.matchedSkills?.length > 0 && (
+        <div className="glass-panel p-8 border-white/5 bg-white/[0.02]" data-testid="matched-skills">
+          <h4 className="font-black uppercase tracking-tighter text-sm text-emerald-400 mb-4">Matched skills</h4>
+          <div className="flex flex-wrap gap-2">
+            {results.matchedSkills.map((skill) => (
+              <span key={skill} className="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-200 text-xs">{skill}</span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {typeof results.improvedScore === 'number' && (
+        <p className="text-sm text-slate-300" data-testid="improved-score">
+          Score after applying suggested keywords in a rewritten summary: {results.improvedScore} (was {results.score}).
+        </p>
+      )}
+
+      {results.rewrites?.length > 0 && (
+        <div className="glass-panel p-8 border-white/5" data-testid="rewrites">
+          <h4 className="font-black uppercase text-sm text-violet-300 mb-4">Suggested rewrites</h4>
+          <ul className="space-y-4">
+            {results.rewrites.map((item, index) => (
+              <li key={index} className="text-sm text-slate-300">
+                <p><span className="text-slate-500">Before:</span> {item.before}</p>
+                <p><span className="text-slate-500">After:</span> {item.after}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       {/* Missing keywords */}
       {results.missingKeywords?.length > 0 && (
-        <div className="glass-panel p-8 border-white/5 bg-white/[0.02]">
+        <div className="glass-panel p-8 border-white/5 bg-white/[0.02]" data-testid="missing-keywords">
           <h4 className="flex items-center gap-3.5 font-black uppercase tracking-tighter text-sm text-cyan-400 mb-6">
             <div className="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center">
               <Sparkles className="w-5 h-5" />

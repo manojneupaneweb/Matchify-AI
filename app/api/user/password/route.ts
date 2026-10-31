@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/lib/authOptions';
 import dbConnect from '@/lib/mongodb';
 import User from '@/models/User';
 import bcrypt from 'bcryptjs';
@@ -15,8 +15,8 @@ export async function PUT(req) {
 
     const { currentPassword, newPassword } = await req.json() as any;
 
-    if (!newPassword || newPassword.length < 6) {
-      return NextResponse.json({ error: 'New password must be at least 6 characters long' }, { status: 400 });
+    if (!newPassword || newPassword.length < 8) {
+      return NextResponse.json({ error: { code: 'VALIDATION', message: 'New password must be at least 8 characters.' } }, { status: 400 });
     }
 
     await dbConnect();
@@ -29,6 +29,9 @@ export async function PUT(req) {
 
     // If the user has a password set (not OAuth-only or already has a password)
     if (user.password) {
+      if (!currentPassword) {
+        return NextResponse.json({ error: { code: 'VALIDATION', message: 'Current password is required.' } }, { status: 400 });
+      }
       const isMatch = await bcrypt.compare(currentPassword, user.password);
       if (!isMatch) {
         return NextResponse.json({ error: 'Incorrect current password' }, { status: 400 });

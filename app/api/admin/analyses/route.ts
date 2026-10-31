@@ -1,10 +1,12 @@
 // @ts-nocheck
+import { requireAdmin } from '@/lib/services/session';
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Result from '@/models/Result';
 
 export async function GET(request) {
-  const { searchParams } = new URL(request.url);
+
+  await requireAdmin();  const { searchParams } = new URL(request.url);
   const page = parseInt(searchParams.get('page') || '1');
   const limit = parseInt(searchParams.get('limit') || '20');
   const search = searchParams.get('search') || '';

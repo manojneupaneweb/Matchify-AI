@@ -43,6 +43,8 @@ async function attemptGeneration(systemPrompt, userPrompt, modelId) {
 
 export async function POST(req) {
   try {
+    const { requireUser } = await import('@/lib/services/session');
+    await requireUser();
     const formData = await req.formData();
     const file = formData.get('resume');
     const jobDescription = formData.get('jobDescription');

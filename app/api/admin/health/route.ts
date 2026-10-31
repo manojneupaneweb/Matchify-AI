@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { requireAdmin } from '@/lib/services/session';
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import mongoose from 'mongoose';
@@ -7,7 +8,8 @@ import User from '@/models/User';
 import Stats from '@/models/Stats';
 
 export async function GET() {
-  try {
+
+  await requireAdmin();  try {
     const start = Date.now();
     await dbConnect();
     const dbPing = Date.now() - start;

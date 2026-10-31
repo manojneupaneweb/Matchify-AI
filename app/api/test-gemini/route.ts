@@ -2,6 +2,8 @@
 import { NextResponse } from 'next/server';
 
 export async function GET() {
+  const { requireAdmin } = await import('@/lib/services/session');
+  await requireAdmin();
   const apiKey = process.env.GEMINI_API_KEY;
   const url = `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`;
 

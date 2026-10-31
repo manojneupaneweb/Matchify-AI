@@ -60,6 +60,10 @@ export default async function ResultDetailsPage({ params }) {
     weaknesses: resultData.weaknesses,
     suggestions: resultData.suggestions,
     missingKeywords: resultData.missingKeywords,
+    matchedSkills: resultData.matchedSkills,
+    improvedScore: resultData.improvedScore,
+    rewrites: resultData.rewrites,
+    rewrittenSummary: resultData.rewrittenSummary,
     charts: resultData.charts
   };
 

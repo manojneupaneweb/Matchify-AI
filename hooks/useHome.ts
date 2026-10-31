@@ -13,6 +13,8 @@ export function useHome() {
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<any>(null);
   const [progress, setProgress] = useState(0);
+  const [analysisStep, setAnalysisStep] = useState('');
+  const [analysisError, setAnalysisError] = useState('');
   const [stats, setStats] = useState({ totalUsers: 0, totalAnalyses: 0 });
   const [activeSection, setActiveSection] = useState('hero');
   const [user, setUser] = useState<any>(null);
@@ -103,39 +105,56 @@ export function useHome() {
     setLoading(true);
     setResults(null);
     setProgress(0);
-
-    // Animated progress bar
-    progressTimerRef.current = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 92) return prev;
-        const step = prev < 40 ? 6 : prev < 70 ? 3 : 0.8;
-        return Math.min(92, prev + step);
-      });
-    }, 900);
+    setAnalysisError('');
+    setAnalysisStep('Parsing');
 
     const formData = new FormData();
     formData.append('resume', file);
     formData.append('jobDescription', jd);
 
+    const controller = new AbortController();
+    progressTimerRef.current = controller;
+
     try {
-      const res = await fetch('/api/analyze', { method: 'POST', body: formData });
-      if (progressTimerRef.current) clearInterval(progressTimerRef.current);
-      setProgress(100);
-
-      const data = await res.json() as any;
-      if (!res.ok) throw new Error(data.error || 'Analysis failed');
-
-      setResults(data);
-      fetchStats();
-
-      // Redirect directly to the specific result page
-      if (data.resultId) {
-        router.push(`/dashboard/results/${data.resultId}`);
+      const res = await fetch('/api/analyze', { method: 'POST', body: formData, signal: controller.signal });
+      if (!res.ok) {
+        const data = await res.json() as any;
+        throw new Error(data?.error?.message || data?.error || 'Analysis failed');
       }
+      const reader = res.body?.getReader();
+      if (!reader) throw new Error('No response stream');
+      const decoder = new TextDecoder();
+      let buffer = '';
+      let finalPayload = null;
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const chunks = buffer.split('\n\n');
+        buffer = chunks.pop() || '';
+        for (const chunk of chunks) {
+          const lines = chunk.split('\n');
+          const eventName = (lines.find((line) => line.startsWith('event: ')) || 'event: message').slice(7);
+          const dataLine = lines.find((line) => line.startsWith('data: '));
+          if (!dataLine) continue;
+          const payload = JSON.parse(dataLine.slice(6));
+          if (eventName === 'progress') {
+            const order = ['Parsing', 'Extracting', 'Matching', 'Scoring', 'Suggesting'];
+            const index = order.indexOf(payload.step);
+            if (index >= 0) setProgress(Math.round(((index + 1) / order.length) * 100));
+            setAnalysisStep(payload.step);
+          }
+          if (eventName === 'error') throw new Error(payload?.error?.message || 'Analysis failed');
+          if (eventName === 'done') finalPayload = payload;
+        }
+      }
+      if (!finalPayload) throw new Error('Analysis did not finish');
+      setResults(finalPayload);
+      fetchStats();
+      if (finalPayload.resultId) router.push(`/dashboard/results/${finalPayload.resultId}`);
     } catch (err) {
-      if (progressTimerRef.current) clearInterval(progressTimerRef.current);
       setProgress(0);
-      alert('❌ Analysis failed: ' + err.message);
+      if (err.name !== 'AbortError') setAnalysisError(err.message);
     } finally {
       setLoading(false);
     }
@@ -147,8 +166,15 @@ export function useHome() {
     setFile(null);
     setJd('');
     setProgress(0);
+    setAnalysisError('');
     scrollToAnalyzer();
   }, [scrollToAnalyzer]);
+
+  const cancelAnalyze = useCallback(() => {
+    progressTimerRef.current?.abort?.();
+    setLoading(false);
+    setProgress(0);
+  }, []);
 
   return {
     file,
@@ -165,6 +191,9 @@ export function useHome() {
     setShowAuthModal,
     handleAnalyze,
     handleReset,
+    cancelAnalyze,
+    analysisStep,
+    analysisError,
     scrollToAnalyzer,
   };
 }

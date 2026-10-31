@@ -198,6 +198,21 @@ export default function SettingsPage() {
               </div>
 
               <button
+                type="button"
+                onClick={async () => {
+                  if (!window.confirm('Delete all saved analyses? Your account stays.')) return;
+                  const res = await fetch('/api/user/data', { method: 'DELETE' });
+                  if (!res.ok) {
+                    window.alert('Could not delete analyses.');
+                    return;
+                  }
+                  window.alert('Saved analyses were deleted.');
+                }}
+                className="mb-4 px-8 py-3.5 bg-white/5 hover:bg-white/10 text-white rounded-2xl font-black uppercase tracking-widest text-[10px]"
+              >
+                Delete my analyses
+              </button>
+              <button
                 onClick={() => { setShowTerminateModal(true); setTerminateInput(''); setTerminateError(''); }}
                 className="px-8 py-3.5 bg-rose-600 hover:bg-rose-700 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-lg shadow-rose-600/20 transition-all flex items-center gap-2"
               >

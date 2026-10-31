@@ -20,7 +20,7 @@ export async function loginAction(prevState, formData) {
     
     // Find the user
     const user = await User.findOne({ email });
-    if (!user) {
+    if (!user || !user.password) {
       return { error: 'Invalid email or password.' };
     }
     

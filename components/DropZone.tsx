@@ -49,7 +49,8 @@ export default function DropZone({ onFileSelect, file }) {
     >
       <input
         type="file"
-        accept=".pdf"
+        aria-label="Resume PDF"
+        accept="application/pdf,.pdf"
         className="hidden"
         ref={fileInputRef}
         onChange={handleFileChange}

@@ -43,6 +43,8 @@ async function attemptGeneration(systemPrompt, userPrompt, modelId) {
 
 export async function POST(req) {
   try {
+    const { requireUser } = await import('@/lib/services/session');
+    await requireUser();
     const { idea, tone = 'professional' } = await req.json() as any;
 
     if (!idea || !idea.trim()) {

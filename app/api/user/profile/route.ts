@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/lib/authOptions';
 import dbConnect from '@/lib/mongodb';
 import User from '@/models/User';
 
@@ -26,7 +26,7 @@ export async function PUT(req) {
         ...(address !== undefined && { address }),
         ...(profilePic !== undefined && { profilePic })
       },
-      { new: true, upsert: true, setDefaultsOnInsert: true } // Return updated document and create if missing
+      { new: true }
     );
 
     if (!updatedUser) {

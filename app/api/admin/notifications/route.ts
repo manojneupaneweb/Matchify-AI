@@ -1,11 +1,13 @@
 // @ts-nocheck
+import { requireAdmin } from '@/lib/services/session';
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Result from '@/models/Result';
 import User from '@/models/User';
 
 export async function GET() {
-  try {
+
+  await requireAdmin();  try {
     await dbConnect();
 
     const since24h = new Date(Date.now() - 24 * 60 * 60 * 1000);

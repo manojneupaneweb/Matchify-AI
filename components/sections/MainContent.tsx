@@ -30,6 +30,9 @@ export default function MainContent() {
     setShowAuthModal,
     handleAnalyze,
     handleReset,
+    cancelAnalyze,
+    analysisStep,
+    analysisError,
     scrollToAnalyzer,
   } = useHome();
 
@@ -47,7 +50,10 @@ export default function MainContent() {
           loading={loading}
           results={results}
           progress={progress}
+          analysisStep={analysisStep}
+          analysisError={analysisError}
           onAnalyze={handleAnalyze}
+          onCancel={cancelAnalyze}
           onReset={handleReset}
         />
 

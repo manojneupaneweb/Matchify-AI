@@ -1,216 +1,101 @@
-// @ts-nocheck
-import { NextResponse } from 'next/server';
 import pdf from 'pdf-parse/lib/pdf-parse.js';
-import { GoogleGenerativeAI } from '@google/generative-ai';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/lib/authOptions';
-import dbConnect from '@/lib/mongodb';
-import Stats from '@/models/Stats';
-import Result from '@/models/Result';
+import { errorResponse } from '@/lib/http';
+import { AppError } from '@/lib/errors';
+import { logger } from '@/lib/logger';
+import { requireUser } from '@/lib/services/session';
+import { saveAnalysis } from '@/lib/services/analysis';
+import { runAnalysisPipeline } from '@/lib/ai/pipeline';
+import { assertPdf, assertResumeText } from '@/lib/validation/pdf';
+import { jobDescriptionSchema } from '@/lib/validation/schemas';
+import { enforceAnalyzeRateLimit } from '@/lib/rate-limit';
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+export const runtime = 'nodejs';
+export const maxDuration = 60;
 
-// 1. Helper: Artificial delay (Queue/Delay simulation)
-const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
-// 2. Resilience strategy: Models to try in order (Confirmed Authorized for this key)
-const AVAILABLE_MODELS = [
-  'gemini-2.0-flash', 
-  'gemini-2.5-flash', 
-  'gemini-flash-latest'
-];
-
-async function attemptAnalysis(prompt, modelId) {
-  const apiKey = process.env.GEMINI_API_KEY;
-  console.log(`Diagnostic: Using Key starting with ${apiKey?.substring(0, 4)}...`);
-  
-  if (!apiKey) throw new Error("GEMINI_API_KEY is missing in environment");
-
-  // Using raw Fetch to v1beta for support of latest confirmed models
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelId}:generateContent?key=${apiKey}`;
-  
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: prompt }] }],
-      generationConfig: { 
-        temperature: 0.7 
-      }
-    })
-  });
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`API Error ${response.status}: ${errorText}`);
-  }
-
-  const data = await response.json() as any;
-  return data.candidates[0].content.parts[0].text;
-}
-
-export async function POST(req) {
-  console.log('--- ANALYSIS START (Resilient Mode) ---');
-
+export async function POST(req: Request) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session || !session.user) {
-      return NextResponse.json({ error: 'Unauthorized. Please login first.' }, { status: 401 });
-    }
-
-    // Diagnostic: Fetch and log all authorized models using raw REST to reveal the TRUTH
-    try {
-      const apiKey = process.env.GEMINI_API_KEY;
-      console.log('Diagnostic: Fetching available models for key:', apiKey?.substring(0, 4));
-      const listRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
-      if (listRes.ok) {
-        const listData = await listRes.json() as any;
-        console.log('--- ACTUAL ALLOWED MODELS ---');
-        console.log(listData.models?.map(m => m.name.replace('models/', '')).join(', ') || 'NONE FOUND');
-        console.log('-----------------------------');
-      } else {
-        const errText = await listRes.text();
-        console.warn(`Diagnostic (models list) failed with status: ${listRes.status}`);
-        console.warn(`Error Details: ${errText}`);
-      }
-    } catch (diagErr) {
-      console.warn('Diagnostic (models list) error:', diagErr.message);
-    }
+    const user = await requireUser();
+    const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'local';
+    await enforceAnalyzeRateLimit(user.email, ip);
 
     const formData = await req.formData();
     const file = formData.get('resume');
     const jobDescription = formData.get('jobDescription');
-
-    if (!file || !jobDescription) {
-      return NextResponse.json({ error: 'Missing resume or job description' }, { status: 400 });
+    if (!(file instanceof File) || typeof jobDescription !== 'string') {
+      throw new AppError('VALIDATION', 'A PDF resume and a job description are required.', 400);
     }
+    const jd = jobDescriptionSchema.parse(jobDescription);
+    const buffer = Buffer.from(await file.arrayBuffer());
+    assertPdf(buffer);
 
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-
-    console.log('PDF parsing...');
-    const pdfData = await pdf(buffer);
-    const resumeText = pdfData.text || '';
-    console.log('PDF parsed. Length:', resumeText.length);
-
-    const prompt = `
-You are an expert ATS resume analyzer.
-Carefully compare the Resume and Job Description below, then return ONLY valid JSON — no markdown, no explanation.
-
-Resume:
-${resumeText}
-
-Job Description:
-${jobDescription}
-
-IMPORTANT RULES:
-- "score" MUST be an INTEGER (whole number) from 0 to 100 representing the percentage match. DO NOT use decimals like 0.8. If the match is 80%, return 80.
-- All chart values (skillsMatch percentages) MUST also be integers from 0 to 100.
-- "keywordCoverage" values should be plain counts (integers), e.g. Matched: 12, Missing: 5.
-
-Return ONLY this JSON structure:
-{
-  "score": <integer 0-100>,
-  "funnyMessage": "<short witty 1-sentence comment about the match>",
-  "strengths": ["<strength 1>", "<strength 2>", "..."],
-  "weaknesses": ["<weakness 1>", "..."],
-  "suggestions": ["<specific actionable suggestion 1>", "..."],
-  "missingKeywords": ["<keyword1>", "<keyword2>", "..."],
-  "charts": {
-    "skillsMatch": {
-      "Technical Skills": <integer 0-100>,
-      "Soft Skills": <integer 0-100>,
-      "Experience": <integer 0-100>,
-      "Education": <integer 0-100>,
-      "Domain Knowledge": <integer 0-100>
-    },
-    "keywordCoverage": {
-      "Matched": <integer count>,
-      "Missing": <integer count>
-    }
-  }
-}
-`;
-
-    let finalAiResponse = null;
-    let lastError = null;
-
-    // 3. Fallback & Retry Logic Loop: Fail fast to the next model
-    for (const modelId of AVAILABLE_MODELS) {
-      console.log(`Trying model: ${modelId}`);
-      try {
-        finalAiResponse = await attemptAnalysis(prompt, modelId);
-        if (finalAiResponse) break; // Success!
-      } catch (err) {
-        lastError = err;
-        console.warn(`Model ${modelId} failed:`, err.message);
-        // Immediately try the next model instead of sleeping to ensure fast response times
-      }
-    }
-
-    if (!finalAiResponse) {
-      throw new Error(`All models and retries failed. Last error: ${lastError?.message}`);
-    }
-
-    // 4. Safe JSON parsing
-    let analysis;
+    let resumeText = '';
     try {
-      const cleaned = finalAiResponse.replace(/```json|```/gi, '').trim();
-      analysis = JSON.parse(cleaned);
-    } catch (err) {
-      console.error('JSON Parse Error:', err.message);
-      return NextResponse.json({ error: 'AI returned invalid JSON', raw: finalAiResponse }, { status: 500 });
+      const parsed = await pdf(buffer);
+      resumeText = assertResumeText(parsed.text || '');
+    } catch (error) {
+      if (error instanceof AppError) throw error;
+      throw new AppError('INVALID_FILE', 'The PDF could not be read.', 400);
     }
 
-    // 5. Normalize score: if AI returned 0.8 instead of 80, fix it
-    if (typeof analysis.score === 'number' && analysis.score <= 1) {
-      analysis.score = Math.round(analysis.score * 100);
-    } else {
-      analysis.score = Math.min(100, Math.max(0, Math.round(analysis.score)));
-    }
-
-    // Normalize skillsMatch values too
-    if (analysis.charts?.skillsMatch) {
-      for (const key of Object.keys(analysis.charts.skillsMatch)) {
-        const val = analysis.charts.skillsMatch[key];
-        if (typeof val === 'number' && val <= 1) {
-          analysis.charts.skillsMatch[key] = Math.round(val * 100);
-        } else {
-          analysis.charts.skillsMatch[key] = Math.min(100, Math.max(0, Math.round(val)));
+    const encoder = new TextEncoder();
+    const stream = new ReadableStream({
+      async start(controller) {
+        const send = (event: string, data: unknown) => {
+          controller.enqueue(encoder.encode(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`));
+        };
+        try {
+          const draft = await runAnalysisPipeline({
+            resumeText,
+            jobDescription: jd,
+            onProgress: (step) => send('progress', { step }),
+          });
+          const saved = await saveAnalysis({
+            userEmail: user.email,
+            resumeName: file.name || 'Resume.pdf',
+            jobDescription: jd,
+            draft,
+          });
+          send('done', {
+            score: draft.score,
+            improvedScore: draft.improvedScore,
+            funnyMessage: draft.funnyMessage,
+            strengths: draft.strengths,
+            weaknesses: draft.weaknesses,
+            suggestions: draft.suggestions,
+            missingKeywords: draft.missingKeywords,
+            matchedSkills: draft.matchedSkills,
+            missingSkills: draft.missingSkills,
+            rewrites: draft.rewrites,
+            rewrittenSummary: draft.rewrittenSummary,
+            charts: draft.charts,
+            resultId: String(saved._id),
+          });
+        } catch (error) {
+          logger.error('analysis stream failed', {
+            message: error instanceof Error ? error.message : 'unknown',
+          });
+          const body =
+            error instanceof AppError
+              ? { code: error.code, message: error.message }
+              : { code: 'INTERNAL', message: 'Analysis failed. Please try again.' };
+          send('error', { error: body });
+        } finally {
+          controller.close();
         }
-      }
-    }
-
-    // 6. Save results to Database
-    await dbConnect();
-    await Stats.findOneAndUpdate({}, { $inc: { totalAnalyses: 1 } }, { upsert: true });
-
-    const newResult = await Result.create({
-      userEmail: session.user.email,
-      resumeName: file.name || 'Resume.pdf',
-      jobDescription: jobDescription,
-      score: analysis.score,
-      funnyMessage: analysis.funnyMessage,
-      strengths: analysis.strengths || [],
-      weaknesses: analysis.weaknesses || [],
-      suggestions: analysis.suggestions || [],
-      missingKeywords: analysis.missingKeywords || [],
-      charts: analysis.charts
+      },
     });
 
-    console.log('Analysis completed and saved successfully');
-    
-    // Add resultId so frontend can redirect to dashboard
-    return NextResponse.json({
-      ...analysis,
-      resultId: newResult._id
+    return new Response(stream, {
+      headers: {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache, no-transform',
+        Connection: 'keep-alive',
+      },
     });
-
   } catch (error) {
-    console.error('Final Server Error:', error);
-    return NextResponse.json({ 
-      error: 'Analysis failed after retries', 
-      message: error.message 
-    }, { status: 500 });
+    if (error instanceof Error && error.name === 'ZodError') {
+      return errorResponse(new AppError('VALIDATION', 'Check the job description and try again.', 400));
+    }
+    return errorResponse(error);
   }
 }

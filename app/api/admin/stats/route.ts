@@ -1,3 +1,4 @@
+import { requireAdmin } from '@/lib/services/session';
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import User from '@/models/User';
@@ -5,7 +6,8 @@ import Result from '@/models/Result';
 import Stats from '@/models/Stats';
 
 export async function GET() {
-  try {
+
+  await requireAdmin();  try {
     await dbConnect();
 
     const [
