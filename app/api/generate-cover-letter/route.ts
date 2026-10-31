@@ -1,4 +1,5 @@
 // @ts-nocheck
+// TODO: same as generate-jd. One prompt, no score, no Zod retry loop.
 import { NextResponse } from 'next/server';
 import pdf from 'pdf-parse/lib/pdf-parse.js';
 
