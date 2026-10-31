@@ -1,0 +1,8 @@
+{
+  "id": "04-full",
+  "resume": "Jordan Lee. Staff engineer, 8 years. JavaScript, React, Node.js, PostgreSQL, Kubernetes, TypeScript. MS Computer Science.",
+  "job": "Staff platform engineer. Must have JavaScript, React, Node.js, Kubernetes. Keywords: TypeScript, PostgreSQL. Experience level: lead. Domain: platform.",
+  "scoreMin": 70,
+  "scoreMax": 100,
+  "missingIncludes": []
+}

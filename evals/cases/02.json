@@ -1,0 +1,8 @@
+{
+  "id": "02-missing-k8s",
+  "resume": "Sam Okonkwo. Backend developer, 6 years. Python, PostgreSQL, and REST APIs. Degree in Computer Science.",
+  "job": "Senior backend role. Must have Python and Kubernetes. Keywords: Python, Kubernetes, PostgreSQL. Experience level: senior. Domain: platform.",
+  "scoreMin": 20,
+  "scoreMax": 90,
+  "missingIncludes": ["kubernetes"]
+}

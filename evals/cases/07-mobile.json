@@ -1,0 +1,10 @@
+{
+  "id": "07-mobile",
+  "resume": "Casey Nguyen. iOS developer, 4 years. Swift and UIKit. BS Computer Science.",
+  "job": "Android engineer. Must have Kotlin. Keywords: Kotlin, Android. Experience level: mid. Domain: mobile.",
+  "scoreMin": 0,
+  "scoreMax": 50,
+  "missingIncludes": [
+    "kotlin"
+  ]
+}

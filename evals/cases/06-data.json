@@ -1,0 +1,10 @@
+{
+  "id": "06-data",
+  "resume": "Morgan Diaz. Data analyst, 5 years. SQL, Python, Excel. BA Economics.",
+  "job": "Data scientist. Must have Python and machine learning. Keywords: SQL, Python. Experience level: mid. Domain: data.",
+  "scoreMin": 20,
+  "scoreMax": 80,
+  "missingIncludes": [
+    "machine learning"
+  ]
+}

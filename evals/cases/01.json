@@ -1,0 +1,8 @@
+{
+  "id": "01-react",
+  "resume": "Alex Rivera. Software engineer, 4 years. Built React and TypeScript web apps. Tested with Jest. Bachelor of Science in Computer Science.",
+  "job": "We are hiring a frontend engineer. Must have React and TypeScript. Nice to have Jest. Keywords: React, TypeScript, CSS. Experience level: mid. Domain: web.",
+  "scoreMin": 60,
+  "scoreMax": 100,
+  "missingIncludes": []
+}

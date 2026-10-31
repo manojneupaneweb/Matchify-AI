@@ -1,0 +1,8 @@
+{
+  "id": "08-devops",
+  "resume": "Avery Brooks. DevOps, 7 years. Kubernetes, Terraform, CI CD, Go. BS Information Systems.",
+  "job": "Senior devops. Must have Kubernetes and Terraform. Keywords: Go, Kubernetes. Experience level: senior. Domain: infrastructure.",
+  "scoreMin": 60,
+  "scoreMax": 100,
+  "missingIncludes": []
+}

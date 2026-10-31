@@ -1,0 +1,10 @@
+{
+  "id": "03-zero",
+  "resume": "Taylor Chen. Recent graduate. Coursework in history and writing. No software projects.",
+  "job": "Junior software engineer. Must have JavaScript. Keywords: JavaScript, Git. Experience level: junior. Domain: web.",
+  "scoreMin": 0,
+  "scoreMax": 40,
+  "missingIncludes": [
+    "javascript"
+  ]
+}
