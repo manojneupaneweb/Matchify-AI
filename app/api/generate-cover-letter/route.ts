@@ -56,17 +56,24 @@ export async function POST(req) {
 
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
+    const { assertPageCount, assertPdf, assertResumeText } = await import('@/lib/validation/pdf');
+    const { fence, UNTRUSTED_RULES } = await import('@/lib/ai/prompts/shared');
+    const { AppError } = await import('@/lib/errors');
 
     let resumeText = '';
     try {
+      assertPdf(buffer);
       const pdfData = await pdf(buffer);
-      resumeText = pdfData.text || '';
+      assertPageCount(Number(pdfData.numpages));
+      resumeText = assertResumeText(pdfData.text || '');
     } catch (err) {
-      console.error('PDF parsing error:', err);
-      return NextResponse.json({ error: 'Failed to read PDF resume' }, { status: 400 });
+      const message = err instanceof AppError ? err.message : 'Could not read this PDF.';
+      const status = err instanceof AppError ? err.status : 400;
+      return NextResponse.json({ error: { code: 'INVALID_FILE', message } }, { status });
     }
 
     const systemPrompt = `
+${UNTRUSTED_RULES}
 You are an expert career coach and professional copywriter.
 Your task is to write a highly professional, compelling, and tailored cover letter based on the provided Resume and Job Description.
 
@@ -83,15 +90,7 @@ Rules:
 }
 `;
 
-    const userPrompt = `
-Resume:
-${resumeText}
-
-Job Description:
-${jobDescription}
-
-Please generate the cover letter.
-`;
+    const userPrompt = `${fence('RESUME', resumeText)}\n${fence('JOB_DESCRIPTION', String(jobDescription))}`;
 
     let finalAiResponse = null;
     let lastError = null;
@@ -123,9 +122,6 @@ Please generate the cover letter.
 
   } catch (error) {
     console.error('Cover Letter Generation Error:', error);
-    return NextResponse.json({ 
-      error: 'Generation failed', 
-      message: error.message 
-    }, { status: 500 });
+    return NextResponse.json({ error: { code: 'INTERNAL', message: 'Could not write the cover letter.' } }, { status: 500 });
   }
 }

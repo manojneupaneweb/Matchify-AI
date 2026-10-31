@@ -50,7 +50,7 @@ export async function GET() {
     console.error('Health check error:', error);
     return NextResponse.json({
       status: 'degraded',
-      error: error.message,
+      error: 'Database check failed.',
       timestamp: new Date().toISOString(),
     }, { status: 500 });
   }

@@ -28,6 +28,6 @@ export async function GET() {
     return NextResponse.json({ status: 'success', authorizedModels: modelNames });
   } catch (error) {
     console.error('Discovery Error:', error.message);
-    return NextResponse.json({ status: 'error', message: error.message }, { status: 500 });
+    return NextResponse.json({ error: { code: 'INTERNAL', message: 'Could not list models.' } }, { status: 500 });
   }
 }

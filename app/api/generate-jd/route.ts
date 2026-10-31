@@ -77,14 +77,8 @@ Output MUST always be a valid JSON object following this EXACT structure (do not
 }
 `;
 
-    const userPrompt = `
-Convert the following short job description idea into a complete, professional, and ATS-friendly job description.
-
-User Input:
-"${idea}"
-
-Make sure to return ONLY the requested JSON format.
-`;
+    const { fence, UNTRUSTED_RULES } = await import('@/lib/ai/prompts/shared');
+    const userPrompt = `${UNTRUSTED_RULES}\n${fence('JOB_IDEA', idea)}\nReturn only the JSON object.`;
 
     let finalAiResponse = null;
     let lastError = null;
@@ -116,9 +110,6 @@ Make sure to return ONLY the requested JSON format.
 
   } catch (error) {
     console.error('JD Generation Error:', error);
-    return NextResponse.json({ 
-      error: 'Generation failed', 
-      message: error.message 
-    }, { status: 500 });
+    return NextResponse.json({ error: { code: 'INTERNAL', message: 'Could not write the job description.' } }, { status: 500 });
   }
 }

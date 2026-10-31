@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { AppError, isAppError } from '../lib/errors';
 import { resetEnvCache } from '../lib/env';
-import { assertPdf, assertResumeText } from '../lib/validation/pdf';
+import { assertPageCount, assertPdf, assertResumeText } from '../lib/validation/pdf';
 import { jobDescriptionSchema } from '../lib/validation/schemas';
 import { buildParsePrompt } from '../lib/ai/prompts/parse';
 import { fence } from '../lib/ai/prompts/shared';
@@ -20,6 +20,11 @@ describe('pdf validation', () => {
     } catch (error) {
       expect(isAppError(error) && error.status).toBe(413);
     }
+  });
+
+  it('rejects a pdf with too many pages', () => {
+    expect(() => assertPageCount(11)).toThrow(/10 pages/);
+    expect(() => assertPageCount(0)).toThrow(/corrupt/);
   });
 
   it('accepts a small pdf header and rejects empty extracted text', () => {

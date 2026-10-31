@@ -6,7 +6,7 @@ import { requireUser } from '@/lib/services/session';
 import { latestScore, saveAnalysis } from '@/lib/services/analysis';
 import { runAgent } from '@/lib/agent/run';
 import { analysisKey, readAnalysisCache, withPrevious, writeAnalysisCache } from '@/lib/agent/cache';
-import { assertPdf, assertResumeText } from '@/lib/validation/pdf';
+import { assertPageCount, assertPdf, assertResumeText } from '@/lib/validation/pdf';
 import { jobDescriptionSchema } from '@/lib/validation/schemas';
 import { enforceAnalyzeRateLimit } from '@/lib/rate-limit';
 
@@ -32,6 +32,7 @@ export async function POST(req: Request) {
     let resumeText = '';
     try {
       const parsed = await pdf(buffer);
+      assertPageCount(Number(parsed.numpages));
       resumeText = assertResumeText(parsed.text || '');
     } catch (error) {
       if (error instanceof AppError) throw error;
