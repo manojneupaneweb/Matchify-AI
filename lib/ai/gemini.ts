@@ -104,7 +104,7 @@ export async function generateStructured<T>(args: GenerateArgs<T>): Promise<Gene
         const parsed = args.schema.safeParse(json);
         if (!parsed.success) {
           const issue = parsed.error.issues.map((item) => item.message).join('; ');
-          lastError = new AppError('UPSTREAM', 'The model returned an unexpected shape.', 502);
+          lastError = new AppError('UPSTREAM', 'Gemini sent JSON that did not match the schema.', 502);
           if (attempt < 2) {
             prompt = `${args.user}\n\nYour previous JSON failed validation: ${issue}. Return corrected JSON only.`;
             continue;
