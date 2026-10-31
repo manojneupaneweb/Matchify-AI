@@ -10,18 +10,18 @@ export async function GET() {
       stats = await Stats.create({ totalUsers: 0, totalAnalyses: 0 });
     }
     return NextResponse.json(stats);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch stats' }, { status: 500 });
   }
 }
 
 // TODO: anyone can POST and inflate totalUsers. Do not show this as a real user count.
-export async function POST(req) {
+export async function POST() {
   try {
     await dbConnect();
     const stats = await Stats.findOneAndUpdate({}, { $inc: { totalUsers: 1 } }, { upsert: true, returnDocument: 'after' });
     return NextResponse.json(stats);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to update user stats' }, { status: 500 });
   }
 }

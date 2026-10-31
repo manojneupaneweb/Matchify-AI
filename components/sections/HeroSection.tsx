@@ -68,7 +68,7 @@ const COMPANY_LOGOS = [
   }
 ];
 
-export default function HeroSection({ onScrollToAnalyzer, liveStats }) {
+export default function HeroSection({ onScrollToAnalyzer }: { onScrollToAnalyzer: () => void; liveStats?: { totalUsers: number; totalAnalyses: number } }) {
   return (
     <section id="hero" className="relative min-h-screen flex flex-col items-center justify-center pt-32 pb-16 text-center overflow-hidden bg-black">
 

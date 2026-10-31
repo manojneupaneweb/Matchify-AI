@@ -33,7 +33,7 @@ export async function GET() {
     ].sort((a, b) => new Date(b.at).getTime() - new Date(a.at).getTime()).slice(0, 30);
 
     return NextResponse.json({ feed });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to load activity' }, { status: 500 });
   }
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -8,7 +8,7 @@ import {
   Shield, Activity, Bell, Search, Menu, X,
   ChevronLeft, ChevronRight, Database,
   Globe, LogOut, TrendingUp, Server, UserPlus,
-  Award, AlertTriangle, Zap, CheckCheck, Clock, Inbox
+  Award, AlertTriangle, CheckCheck, Clock, Inbox
 } from 'lucide-react';
 
 /* ── Nav structure ───────────────────────────────────────── */

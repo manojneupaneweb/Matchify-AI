@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type ComponentType } from 'react';
 import { TrendingUp, RefreshCw, Award, Users, ArrowUpRight, ArrowDownRight, Star } from 'lucide-react';
 
 function getScoreColor(s) {
@@ -177,7 +177,7 @@ export default function AdminReportsPage() {
   );
 }
 
-function WoWCard({ label, current, previous, diff, unit, icon: Icon, positive }: { label: any; current: any; previous: any; diff: any; unit: any; icon: any; positive?: boolean }) {
+function WoWCard({ label, current, previous, diff, unit, icon: Icon }: { label: string; current: string | number; previous: string | number; diff: string | null; unit: string; icon: ComponentType<{ className?: string }>; positive?: boolean }) {
   const isUp = parseFloat(diff) >= 0;
   return (
     <div className="glass-panel bg-white/[0.02] border-white/5 p-5">

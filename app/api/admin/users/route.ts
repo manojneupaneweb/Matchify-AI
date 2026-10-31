@@ -43,7 +43,7 @@ export async function GET(request) {
     }));
 
     return NextResponse.json({ users: enriched, total, page, limit });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch users' }, { status: 500 });
   }
 }

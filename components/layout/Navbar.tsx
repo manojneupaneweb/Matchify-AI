@@ -1,8 +1,9 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
-import { Sparkles, Menu, X, ChevronRight, LogIn, LogOut, User, LayoutDashboard, ChevronDown } from 'lucide-react';
+import { Menu, X, ChevronRight, LogIn, LogOut, User, LayoutDashboard, ChevronDown } from 'lucide-react';
 import { useSession, signOut } from 'next-auth/react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const NAV_LINKS = [
   { label: 'Resume Analyzer', href: '#analyzer' },
@@ -56,7 +57,7 @@ export default function Navbar({ activeSection }) {
           <a href="#" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
             className="flex items-center gap-2.5 group">
             <div className="w-10 h-10 bg-gradient-to-br from-violet-500 to-cyan-400 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-violet-500/40 transition-shadow overflow-hidden">
-              <img src="/logo.png" alt="Matchify AI Logo" className="w-full h-full object-cover" />
+              <Image src="/logo.png" alt="Matchify AI Logo" width={40} height={40} className="w-full h-full object-cover" />
             </div>
             <span className="text-xl md:text-2xl font-bold bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">
               Matchify AI
@@ -96,9 +97,12 @@ export default function Navbar({ activeSection }) {
                   onClick={() => setProfileOpen(!profileOpen)}
                   className="flex items-center gap-3 border border-white/10 bg-white/5 pl-2 pr-4 py-1.5 rounded-full backdrop-blur-md hover:bg-white/10 transition-colors focus:outline-none"
                 >
-                  <img
+                  <Image
                     src={session.user?.image || `https://ui-avatars.com/api/?name=${session.user?.name || 'User'}&background=8b5cf6&color=fff`}
                     alt={session.user?.name || 'User Profile'}
+                    width={32}
+                    height={32}
+                    unoptimized
                     className="w-8 h-8 rounded-full border border-violet-500/50 object-cover"
                   />
                   <span className="text-sm font-medium text-slate-200">
@@ -178,9 +182,12 @@ export default function Navbar({ activeSection }) {
               {session ? (
                 <div className="flex flex-col gap-2 p-4 bg-white/5 rounded-2xl border border-white/10">
                   <div className="flex items-center gap-3 mb-2">
-                    <img
+                    <Image
                       src={session.user?.image || `https://ui-avatars.com/api/?name=${session.user?.name || 'User'}&background=8b5cf6&color=fff`}
                       alt="Profile"
+                      width={40}
+                      height={40}
+                      unoptimized
                       className="w-10 h-10 rounded-full border border-violet-500/50"
                     />
                     <div className="flex flex-col">

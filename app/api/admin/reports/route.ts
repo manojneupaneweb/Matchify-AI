@@ -2,8 +2,6 @@ import { requireAdmin } from '@/lib/services/session';
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Result from '@/models/Result';
-import User from '@/models/User';
-
 export async function GET() {
 
   await requireAdmin();  try {
@@ -67,7 +65,7 @@ export async function GET() {
     ]);
 
     return NextResponse.json({ scoreBreakdown, topUsers, recentHighScores, weeklyComparison: weeklyComparison[0] });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to load reports' }, { status: 500 });
   }
 }

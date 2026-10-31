@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { useSession, signOut } from 'next-auth/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -36,11 +37,6 @@ export default function DashboardLayout({ children }) {
     const hours = Math.floor(diff / 60);
     if (hours <= 12) return `${hours}hr ago`;
     return new Date(dateStr).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' });
-  };
-
-  const handleLogout = (e) => {
-    if (e) e.preventDefault();
-    signOut({ callbackUrl: '/login' });
   };
 
   const navItems = [
@@ -292,9 +288,12 @@ export default function DashboardLayout({ children }) {
                   onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
                   className="flex items-center gap-3 p-1.5 rounded-2xl hover:bg-white/5 transition-all duration-300 group"
                 >
-                  <img 
-                    src={session?.user?.image || `https://ui-avatars.com/api/?name=${session?.user?.name || 'User'}&background=8b5cf6&color=fff`} 
+                  <Image
+                    src={session?.user?.image || `https://ui-avatars.com/api/?name=${session?.user?.name || 'User'}&background=8b5cf6&color=fff`}
                     alt="Profile"
+                    width={36}
+                    height={36}
+                    unoptimized
                     className="w-9 h-9 rounded-xl object-cover border border-white/10 group-hover:border-violet-500/50 transition-colors"
                   />
                  

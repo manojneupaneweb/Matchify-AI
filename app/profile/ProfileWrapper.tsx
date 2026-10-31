@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from 'react';
+import Image from 'next/image';
 import { Mail, Camera, Edit2, Check, X, MapPin, Phone } from 'lucide-react';
 
 export default function ProfileWrapper({ initialUser }) {
@@ -73,9 +74,12 @@ export default function ProfileWrapper({ initialUser }) {
         <div className="relative flex flex-col md:flex-row items-center gap-8 justify-center md:justify-start">
           <div className="relative group">
             <div className="absolute inset-0 bg-gradient-to-br from-violet-500 to-purple-600 rounded-full blur-xl opacity-30 transition-opacity duration-300 group-hover:opacity-50"></div>
-            <img 
+            <Image
               src={displayImage}
               alt="Profile picture"
+              width={160}
+              height={160}
+              unoptimized
               className="relative w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-white/10 object-cover shadow-2xl"
             />
           </div>
@@ -123,9 +127,12 @@ export default function ProfileWrapper({ initialUser }) {
           <div className="flex flex-col items-center gap-4">
             <div className="relative group cursor-pointer w-32 h-32 md:w-40 md:h-40" onClick={() => fileInputRef.current?.click()}>
               <div className="absolute inset-0 bg-gradient-to-br from-violet-500 to-purple-600 rounded-full blur-xl opacity-30 group-hover:opacity-50 transition-opacity duration-300"></div>
-              <img 
+              <Image
                 src={displayImage}
                 alt="Profile picture"
+                width={160}
+                height={160}
+                unoptimized
                 className="relative w-full h-full rounded-full border-4 border-white/10 object-cover shadow-2xl transition-all group-hover:brightness-50"
               />
               <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">

@@ -24,7 +24,6 @@ export default function MainContent() {
     progress,
     stats,
     activeSection,
-    user,
     showAuthModal,
     setShowAuthModal,
     handleAnalyze,

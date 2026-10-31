@@ -157,7 +157,9 @@ export default function CoverLetterSection() {
                           try {
                             const text = await navigator.clipboard.readText();
                             setJd(text);
-                          } catch (err) {}
+                          } catch {
+                            /* clipboard unavailable */
+                          }
                         }}
                         className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-colors"
                       >

@@ -1,5 +1,5 @@
 'use client';
-import { Settings, Shield, Key, Globe, Bell, Palette, Lock, Info, CheckCircle, ExternalLink } from 'lucide-react';
+import { Shield, Key, Globe, Palette, Lock, Info, CheckCircle, ExternalLink } from 'lucide-react';
 
 const ENV_CONFIG = [
   { key: 'NEXTAUTH_URL', value: 'http://localhost:3000', label: 'Auth Base URL', status: true },

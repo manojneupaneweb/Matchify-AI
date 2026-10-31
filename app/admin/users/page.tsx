@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Users, Search, RefreshCw, ChevronLeft, ChevronRight, Shield, User } from 'lucide-react';
+import { Search, RefreshCw, ChevronLeft, ChevronRight, Shield, User } from 'lucide-react';
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<any[]>([]);

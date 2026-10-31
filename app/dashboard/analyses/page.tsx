@@ -6,7 +6,7 @@ import { decrypt } from '@/lib/auth';
 import dbConnect from '@/lib/mongodb';
 import Result from '@/models/Result';
 import Link from 'next/link';
-import { FileText, Calendar, Target, ArrowRight, Search, Filter } from 'lucide-react';
+import { FileText, Calendar, Search, Filter } from 'lucide-react';
 
 export default async function AnalysesHistoryPage({ searchParams }) {
   let session = await getServerSession(authOptions);

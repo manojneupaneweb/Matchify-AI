@@ -5,8 +5,6 @@ import { cookies } from 'next/headers';
 import { decrypt } from '@/lib/auth';
 import dbConnect from '@/lib/mongodb';
 import Result from '@/models/Result';
-import Stats from '@/models/Stats';
-import User from '@/models/User';
 import UserScoreChart from './UserScoreChart';
 import Link from 'next/link';
 import { SkillsRadar, KeywordCoverage, ScoreDistribution } from './DashboardAnalytics';
@@ -121,8 +119,6 @@ export default async function DashboardPage() {
   const momentum = (lastThreeAvg - currentAvgNum).toFixed(1);
 
   // User/Profile Fetch (used for best match / scans only)
-  const userDoc = await User.findOne({ email: session.user?.email }).lean();
-
   const recentScans = [...allUserResults].reverse().slice(0, 5);
 
   return (

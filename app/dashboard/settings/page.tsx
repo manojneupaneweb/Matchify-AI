@@ -79,7 +79,7 @@ export default function SettingsPage() {
       } else {
         setStatus({ type: 'error', message: data.error || 'Failed to update password' });
       }
-    } catch (error) {
+    } catch {
       setStatus({ type: 'error', message: 'Could not save that.' });
     } finally {
       setIsLoading(false);

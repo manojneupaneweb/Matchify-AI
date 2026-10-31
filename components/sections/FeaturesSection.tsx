@@ -1,5 +1,5 @@
 'use client';
-import { Target, BarChart3, Zap, Lightbulb, Shield, TrendingUp, FileSearch, Users } from 'lucide-react';
+import { Target, BarChart3, Zap, Lightbulb, Shield, FileSearch } from 'lucide-react';
 
 const FEATURES = [
   { icon: Target, title: 'AI Resume Analysis', desc: 'Our flagship analyzer scans your resume against job descriptions with 98% accuracy, identifying critical match gaps.', stat: '98% Match Accuracy', color: 'from-violet-500 to-purple-600', bg: 'rgba(139,92,246,0.08)' },

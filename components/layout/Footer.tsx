@@ -1,5 +1,6 @@
 'use client';
-import { Sparkles, GitFork, ExternalLink, Mail, ArrowUpRight } from 'lucide-react';
+import Image from 'next/image';
+import { GitFork, ExternalLink, Mail, ArrowUpRight } from 'lucide-react';
 
 const FOOTER_LINKS = {
   Product: [
@@ -49,7 +50,7 @@ export default function Footer() {
           <div className="lg:w-80 flex-shrink-0">
             <div className="flex items-center gap-2.5 mb-4">
               <div className="w-9 h-9 bg-gradient-to-br from-violet-500 to-cyan-400 rounded-xl flex items-center justify-center shadow-lg overflow-hidden">
-                <img src="/logo.png" alt="Matchify AI Logo" className="w-full h-full object-cover" />
+                <Image src="/logo.png" alt="Matchify AI Logo" width={36} height={36} className="w-full h-full object-cover" />
               </div>
               <span className="text-xl font-bold bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">
                 Matchify AI

@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { Shield, Lock, Eye, EyeOff, CheckCircle2, AlertCircle, LogOut, Monitor } from 'lucide-react';
 import { signOut, useSession } from 'next-auth/react';
-import Link from 'next/link';
 
 export default function SecurityPage() {
   const { data: session } = useSession();

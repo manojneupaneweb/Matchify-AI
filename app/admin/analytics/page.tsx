@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { BarChart3, TrendingUp, RefreshCw, Tag, Users, Activity, Zap } from 'lucide-react';
+import { TrendingUp, RefreshCw, Tag, Users, Activity, Zap } from 'lucide-react';
 
 export default function AdminAnalyticsPage() {
   const [data, setData] = useState<any>(null);
@@ -124,7 +124,7 @@ export default function AdminAnalyticsPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {avgScoreByUser.map((u, i) => (
+                  {avgScoreByUser.map((u) => (
                     <tr key={u._id} className="border-b border-white/[0.03] hover:bg-white/[0.02]">
                       <td className="py-2 pr-4 text-slate-400 max-w-[160px] truncate">{u._id}</td>
                       <td className="py-2 pr-4 font-black text-cyan-400">{u.count}</td>

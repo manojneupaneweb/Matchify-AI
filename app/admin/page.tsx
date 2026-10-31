@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import {
-  Users, FileText, BarChart3, TrendingUp, Activity,
+  Users, FileText, BarChart3, Activity,
   Shield, Award, AlertTriangle, ArrowUpRight, ArrowDownRight,
-  Clock, Star, Database, RefreshCw, ChevronRight, Sparkles, Zap
+  Database, RefreshCw, ChevronRight, Sparkles
 } from 'lucide-react';
 import Link from 'next/link';
 
