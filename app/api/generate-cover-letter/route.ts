@@ -2,6 +2,7 @@ import pdf from 'pdf-parse/lib/pdf-parse.js';
 import { ZodError } from 'zod';
 import { errorResponse } from '@/lib/http';
 import { AppError } from '@/lib/errors';
+import { clientIp, enforceWriteRateLimit } from '@/lib/rate-limit';
 import { requireUser } from '@/lib/services/session';
 import { writeCoverLetter } from '@/lib/services/writing';
 import { jobDescriptionSchema } from '@/lib/validation/schemas';
@@ -9,7 +10,8 @@ import { assertPageCount, assertPdf, assertResumeText } from '@/lib/validation/p
 
 export async function POST(req: Request) {
   try {
-    await requireUser();
+    const user = await requireUser();
+    await enforceWriteRateLimit(user.email, clientIp(req));
     const formData = await req.formData();
     const file = formData.get('resume');
     const jobDescription = formData.get('jobDescription');

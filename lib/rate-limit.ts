@@ -44,17 +44,32 @@ async function upstashHit(key: string, limit: number, windowMs: number) {
   return { ok: count <= limit, retryAfter: Math.ceil(windowMs / 1000) };
 }
 
-export async function enforceAnalyzeRateLimit(userKey: string, ip: string) {
+const scopeAnalyze = 'analyze';
+const scopeWrite = 'write';
+
+async function enforceRateLimit(scope: string, userKey: string, ip: string, message: string) {
   const env = getEnv();
   const windowMs = env.RATE_LIMIT_WINDOW_MS;
   const limit = env.RATE_LIMIT_MAX;
-  for (const key of [`analyze:user:${userKey}`, `analyze:ip:${ip}`]) {
+  for (const key of [`${scope}:user:${userKey}`, `${scope}:ip:${ip}`]) {
     const remote = await upstashHit(key, limit, windowMs).catch(() => null);
     const result = remote ?? memoryHit(key, limit, windowMs);
     if (!result.ok) {
-      throw new AppError('RATE_LIMITED', 'Too many analyses. Try again shortly.', 429, result.retryAfter);
+      throw new AppError('RATE_LIMITED', message, 429, result.retryAfter);
     }
   }
+}
+
+export function clientIp(req: Request) {
+  return req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'local';
+}
+
+export function enforceAnalyzeRateLimit(userKey: string, ip: string) {
+  return enforceRateLimit(scopeAnalyze, userKey, ip, 'Too many analyses. Try again shortly.');
+}
+
+export function enforceWriteRateLimit(userKey: string, ip: string) {
+  return enforceRateLimit(scopeWrite, userKey, ip, 'Too many requests. Try again shortly.');
 }
 
 export function resetRateLimitMemory() {

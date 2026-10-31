@@ -8,7 +8,7 @@ import { runAgent } from '@/lib/agent/run';
 import { analysisKey, readAnalysisCache, withPrevious, writeAnalysisCache } from '@/lib/agent/cache';
 import { assertPageCount, assertPdf, assertResumeText } from '@/lib/validation/pdf';
 import { jobDescriptionSchema } from '@/lib/validation/schemas';
-import { enforceAnalyzeRateLimit } from '@/lib/rate-limit';
+import { clientIp, enforceAnalyzeRateLimit } from '@/lib/rate-limit';
 
 export const runtime = 'nodejs';
 export const maxDuration = 60;
@@ -16,7 +16,7 @@ export const maxDuration = 60;
 export async function POST(req: Request) {
   try {
     const user = await requireUser();
-    const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'local';
+    const ip = clientIp(req);
     await enforceAnalyzeRateLimit(user.email, ip);
 
     const formData = await req.formData();

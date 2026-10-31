@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { generateStructured } from '../lib/ai/gemini';
 import { runAnalysisPipeline } from '../lib/ai/pipeline';
 import { resetEnvCache } from '../lib/env';
-import { resetRateLimitMemory, enforceAnalyzeRateLimit } from '../lib/rate-limit';
+import { resetRateLimitMemory, enforceAnalyzeRateLimit, enforceWriteRateLimit } from '../lib/rate-limit';
 import { AppError } from '../lib/errors';
 
 const schema = z.object({ ok: z.boolean() });
@@ -148,5 +148,6 @@ describe('rate limit', () => {
     await expect(enforceAnalyzeRateLimit('user@example.com', '127.0.0.1')).rejects.toMatchObject({
       status: 429,
     });
+    await enforceWriteRateLimit('user@example.com', '127.0.0.1');
   });
 });
