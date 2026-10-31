@@ -1,36 +1,36 @@
 import { createHash } from 'node:crypto';
+import AnalysisCache from '../../models/AnalysisCache';
+import { dbConnect } from '../mongodb';
 import type { AnalysisDraft } from '../ai/pipeline';
 
 type Cached = AnalysisDraft & { critiqueIssues: string[] };
 
-const store = new Map<string, { at: number; value: Cached }>();
-const TTL_MS = 60 * 60 * 1000;
-const MAX = 100;
+const HOUR_MS = 60 * 60 * 1000;
 
 export function analysisKey(resumeText: string, jobDescription: string) {
   return createHash('sha256').update(resumeText).update('\n--\n').update(jobDescription).digest('hex');
 }
 
-export function readAnalysisCache(key: string): Cached | null {
-  const hit = store.get(key);
+export async function readAnalysisCache(key: string): Promise<Cached | null> {
+  await dbConnect();
+  const hit = await AnalysisCache.findOne({ key }).lean<{ value: Cached; createdAt: Date } | null>();
   if (!hit) return null;
-  if (Date.now() - hit.at > TTL_MS) {
-    store.delete(key);
-    return null;
-  }
+  if (new Date(hit.createdAt).getTime() + HOUR_MS <= Date.now()) return null;
   return hit.value;
 }
 
-export function writeAnalysisCache(key: string, value: Cached) {
-  if (store.size >= MAX) {
-    const oldest = store.keys().next().value;
-    if (oldest) store.delete(oldest);
-  }
-  store.set(key, { at: Date.now(), value });
+export async function writeAnalysisCache(key: string, value: Cached) {
+  await dbConnect();
+  await AnalysisCache.findOneAndUpdate(
+    { key },
+    { key, value, createdAt: new Date() },
+    { upsert: true },
+  );
 }
 
-export function clearAnalysisCache() {
-  store.clear();
+export async function clearAnalysisCache() {
+  await dbConnect();
+  await AnalysisCache.deleteMany({});
 }
 
 export function withPrevious<T extends { score: number; funnyMessage: string }>(

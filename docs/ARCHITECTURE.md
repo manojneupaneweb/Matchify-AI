@@ -12,7 +12,7 @@ The home page posts a PDF and a job description to `POST /api/analyze`. The rout
 
 Each model reply is checked with Zod. Invalid JSON is sent back with the error, up to two retries, then the request fails. `gemini-2.5-flash` goes first. `gemini-2.0-flash` is the fallback.
 
-Identical resume text and job description are cached in memory for one hour. A signed-in user's new score is still compared with their previous saved score after the cache lookup.
+Identical resume text and job description are cached in MongoDB for one hour (TTL index on `createdAt`). A signed-in user's new score is still compared with their previous saved score after the cache lookup.
 
 Raw PDF bytes are not stored.
 

@@ -40,7 +40,7 @@ flowchart LR
 
 The agent lives in `lib/agent/`. It can call `extract_keywords` and `rewrite_bullet`. Those tools run in our code. The model chooses when to call them. After the skills are out, `lib/scoring.ts` computes the number. A critique step can run a second time if it marks its own review as not ok. Bad JSON is sent back up to twice.
 
-If the same resume text and job description were analyzed in the last hour on this process, the model is skipped and the cached draft is reused. The comparison with your previous score still happens after that.
+If the same resume text and job description were analyzed in the last hour, the model is skipped and the cached draft is reused. The comparison with your previous score still happens after that.
 
 More detail in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
@@ -52,7 +52,7 @@ Function calling is only for the two tools. I did not give the model a tool that
 
 Resume and JD text are untrusted. I wrap them in `BEGIN UNTRUSTED` / `END UNTRUSTED` and tell the model to ignore instructions inside. If the text contains those markers I break them up so it cannot close the block early.
 
-Primary model is `gemini-2.5-flash`. On timeout, 429, or 5xx I try `gemini-2.0-flash`. The cache is in memory, so a second server process will call Gemini again. The client only sees `{ error: { code, message } }`.
+Primary model is `gemini-2.5-flash`. On timeout, 429, or 5xx I try `gemini-2.0-flash`. The cache is a MongoDB collection with a one-hour TTL, so another server process can reuse it. The client only sees `{ error: { code, message } }`.
 
 ## Stack
 
@@ -103,7 +103,7 @@ Playwright sets an `e2e_user` cookie when `E2E_AUTH_BYPASS=1` and stubs `/api/an
 - "Senior" just means the extracted years are at least 5. That is a guess.
 - The synonym list is short. Most tools are matched by the exact normalized name.
 - Cover letters and generated JDs do not run the critique loop or the score.
-- The analysis cache dies when the process restarts. It is not shared across servers.
+- MongoDB deletes cached analyses about an hour after they are written. The TTL job is not instant.
 - Rate limit is per server process unless Upstash is set.
 - A lot of the older pages still have `// @ts-nocheck`. `noImplicitAny` is off so those files compile. New code in `lib/` is stricter.
 - The analysis holds the HTTP connection open. `maxDuration` is 60 seconds. There is no job queue.

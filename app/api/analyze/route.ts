@@ -48,7 +48,7 @@ export async function POST(req: Request) {
         try {
           const previousScore = await latestScore(user.email);
           const key = analysisKey(resumeText, jd);
-          const cached = readAnalysisCache(key);
+          const cached = await readAnalysisCache(key);
           let base = cached;
           if (base) {
             logger.info('analysis cache hit', { key: key.slice(0, 12) });
@@ -61,7 +61,7 @@ export async function POST(req: Request) {
               jobDescription: jd,
               onProgress: (step) => send('progress', { step }),
             });
-            writeAnalysisCache(key, base);
+            await writeAnalysisCache(key, base);
           }
           const draft = withPrevious(base, previousScore);
           const saved = await saveAnalysis({
