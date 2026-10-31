@@ -3,9 +3,6 @@ import { useEffect } from 'react';
 import { X } from 'lucide-react';
 import { signIn } from 'next-auth/react';
 
-/**
- * A premium Auth Modal that uses NextAuth (Google/GitHub)
- */
 export default function AuthModal({ isOpen, onClose }) {
   useEffect(() => {
     if (isOpen) {
