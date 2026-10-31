@@ -40,7 +40,6 @@ export function resetEnvCache() {
   cached = null;
 }
 
-/** Fail fast when the server process starts. Skipped while Next is collecting build data. */
 export function assertEnv() {
   if (process.env.NEXT_PHASE === 'phase-production-build') return;
   getEnv();
